@@ -17,6 +17,7 @@
         #app-screen { display: none; padding-bottom: 50px; }
         .header-section { background: linear-gradient(135deg, #004d4d, var(--primary)); color: white; padding: 40px 15px; border-radius: 0 0 40px 40px; text-align: center; position: relative; }
 
+        /* تنسيق التقرير للـ PDF - هندسي ومستقيم 100% */
         #report-template { 
             display: none; padding: 40pt; background: white; width: 595pt; margin: 30px auto; color: #000; box-shadow: 0 0 15px rgba(0,0,0,0.1); border: 1px solid #ddd;
         }
@@ -125,11 +126,21 @@
     let rawData = [];
     let currentMode = 'course';
 
+    // تم تعديل هذه الدالة لتنظيف التقرير عند العودة
     function goScreen(screenId) {
         document.getElementById('welcome-screen').style.display = 'none';
         document.getElementById('mode-screen').style.display = 'none';
         document.getElementById('app-screen').style.display = 'none';
         document.getElementById('action-area').style.display = 'none';
+        
+        // إخفاء قالب التقرير عند الانتقال بين الشاشات
+        document.getElementById('report-template').style.display = 'none';
+        
+        if(screenId === 'app-screen' || screenId === 'mode-screen') {
+            document.getElementById('upload').value = '';
+            rawData = [];
+        }
+        
         if(screenId === 'welcome-screen') document.getElementById('welcome-screen').style.display = 'flex';
         if(screenId === 'mode-screen') document.getElementById('mode-screen').style.display = 'flex';
         if(screenId === 'app-screen') document.getElementById('app-screen').style.display = 'block';
@@ -140,7 +151,7 @@
         goScreen('app-screen');
         if(mode === 'trainee') {
             document.getElementById('app-title').innerText = 'تحليل غياب متدرب';
-            document.getElementById('upload-hint').innerText = 'ارفع ملف الـ SVC الخاص بالمتدرب الموحد';
+            document.getElementById('upload-hint').innerText = 'ارفع ملف الـ SVC الخاص بالمتدرب';
             document.getElementById('lbl_c_t').innerText = 'اسم المتدرب: ';
             document.getElementById('lbl_s_i').innerText = 'الرقم التدريبي: ';
         } else {
@@ -164,7 +175,6 @@
         };
     });
 
-    // منطق الحالة للمقرر (ساعات)
     function getCourseStatus(h) {
         if(h >= 4) return "حرمان 🚫";
         if(h == 3) return "خطر مرتفع ⚠️";
@@ -172,7 +182,6 @@
         return "آمن ✅";
     }
 
-    // منطق الحالة للمتدرب (نسبة مئوية) - يأخذ أعلى قيمة بين الثلاث نسب
     function getTraineeStatus(pMax) {
         if(pMax >= 19.5) return "حرمان 🚫";
         if(pMax >= 14.5) return "خطر مرتفع ⚠️";
@@ -190,7 +199,7 @@
 
         if (currentMode === 'course') {
             thead.innerHTML = `<tr><th style="width:30pt;">م</th><th style="width:200pt;text-align:right;padding-right:10pt;">اسم المتدرب</th><th style="width:90pt;">الرقم التدريبي</th><th style="width:60pt;">الساعات</th><th style="width:90pt;">الحالة</th></tr>`;
-            document.getElementById('pdf_course').innerText = rawData[0]['اسم المقرر'] || "---";
+            document.getElementById('pdf_course').innerText = rawData[0]['اسم المتدرب'] ? rawData[0]['اسم المقرر'] : "تحقق من الملف";
             document.getElementById('pdf_section').innerText = rawData[0]['أرقام شعب المقرر'] || "---";
             
             rawData.forEach(r => {
@@ -209,8 +218,6 @@
                 let pNathari = parseFloat(r['إجمالي نسبة الغياب النظري بدون عذر'] || 0);
                 let pAmali = parseFloat(r['إجمالي نسبة الغياب العملي بدون عذر'] || 0);
                 let pTotal = parseFloat(r['إجمالي نسبة الغياب بدون عذر'] || 0);
-                
-                // القاعدة الجديدة: خذ أعلى نسبة من الثلاثة
                 let maxPercentage = Math.max(pNathari, pAmali, pTotal);
                 let s = getTraineeStatus(maxPercentage);
 
