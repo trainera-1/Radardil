@@ -16,18 +16,22 @@
         .header-section { background: linear-gradient(135deg, #004d4d, var(--primary)); color: white; padding: 40px 15px; border-radius: 0 0 40px 40px; text-align: center; position: relative; }
         #report-template { display: none; padding: 35pt; background: white; width: 595pt; margin: 20px auto; color: #000; box-shadow: 0 0 15px rgba(0,0,0,0.1); border: 1px solid #ddd; }
         .report-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2pt solid var(--gold); padding-bottom: 10pt; margin-bottom: 20pt; }
+        
+        /* هندسة الجداول العلوية - تقسيم ثابت 55% و 45% لضمان الاستقامة */
         .info-table { width: 100%; border: 2pt solid #000; border-collapse: collapse; table-layout: fixed; }
         .info-table td { padding: 8pt; border: 1.5pt solid #000; font-weight: bold; font-size: 10.5pt; text-align: right; overflow: hidden; white-space: nowrap; }
+        
         .status-header-box { border: 2pt solid #000; border-top: none; background: #f2f2f2; text-align: center; padding: 8pt; font-weight: bold; width: 60%; margin: 0 auto 20pt; border-radius: 0 0 15pt 15pt; }
         .data-table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 2pt solid #000; }
         .data-table th, .data-table td { border: 1.5pt solid #000; padding: 6pt 3pt; text-align: center; font-size: 9.5pt; vertical-align: middle; }
         .data-table th { background: #eeeeee; font-weight: bold; }
+        
         .btn-view { background: var(--primary); color: white; border: none; border-radius: 12px; padding: 12px; font-weight: bold; flex: 1; margin: 5px; cursor: pointer; }
         .btn-download { background: var(--gold); color: white; border: none; border-radius: 12px; padding: 12px; font-weight: bold; flex: 1; margin: 5px; cursor: pointer; }
         .btn-mode { background: white; color: var(--primary); border: 2px solid var(--primary); border-radius: 15px; padding: 15px; font-size: 1.1rem; font-weight: bold; transition: 0.3s; cursor: pointer; width: 100%; display: block; margin-bottom: 15px; }
         .btn-mode:hover { background: var(--primary); color: white; transform: scale(1.02); }
-        .wa-btn { cursor: pointer; transition: 0.2s; }
-        .wa-btn:hover { transform: scale(1.2); }
+        .wa-btn-icon { cursor: pointer; transition: 0.2s; vertical-align: middle; }
+        .wa-btn-icon:hover { transform: scale(1.2); opacity: 0.8; }
     </style>
 </head>
 <body>
@@ -35,7 +39,7 @@
 <div id="welcome-screen" class="full-screen">
     <div class="main-card shadow">
         <h2 class="fw-bold mb-4" style="color: var(--primary);">أهلاً بك في رادار الغياب</h2>
-        <p class="mb-4">الأداة الذكية لمساعدة المدربين في تحليل الغياب والتواصل مع المتدربين - م. عادل الشمري</p>
+        <p class="mb-4">الأداة الذكية لتحليل الغياب والتواصل الفوري مع المتدربين - م. عادل الشمري</p>
         <div class="alert alert-warning border-0 small mb-4">للملاحظات: <b>0505596106</b></div>
         <button class="btn btn-primary px-5 py-2 rounded-pill shadow" onclick="goScreen('mode-screen')">التالي ➜</button>
     </div>
@@ -45,7 +49,7 @@
     <div class="main-card shadow w-100">
         <h3 class="fw-bold mb-4" style="color: var(--primary);">اختر نوع التقرير</h3>
         <button class="btn-mode" onclick="setMode('course')">📚 تحليل غياب مقرر (شعبة كاملة)</button>
-        <button class="btn-mode" onclick="setMode('trainee')">👨‍🎓 تحليل غياب متدرب (مقررات المتدرب)</button>
+        <button class="btn-mode" onclick="setMode('trainee')">👨‍🎓 تحليل غياب متدرب (مباشر)</button>
         <button class="btn btn-secondary px-4 rounded-pill mt-3" onclick="goScreen('welcome-screen')">العودة</button>
     </div>
 </div>
@@ -78,7 +82,7 @@
 
     <div id="report-template">
         <div class="report-header">
-            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAYAAADDPmHLAAAACXBIWXMAAAsTAAALEwEAmpwYAAAKT2lDQ1BQaG90b3Nob3AgSUNDIAHvP2RHSUZYTVREQUEwUDAwMDAwMDk5NDY0OTU4OTA5MDlkODExOTA1NDUzNDU1NzM1NzEwMDA4NjI5OTMwMDAwMDAwMDE4NzAxOTUwMDAwMDAwMDI3MDgyMjUwMDAwMDAwMDczMDgyMjUwMDAwMDAwMDk5MDgyMjUwMDAwMDAwMDEyNTA4MjI1MDAwMDAwMDE1MzA4MjI1MDAwMDAwMDE4MzA4MjI1MDAwMDAwMDIxMzA4MjI1MDAwMDAwMDI0MzA4MjI1MDAwMDAwMDI3MzA4MjI1MDAwMDAwMDMzMDgxOTUwMDAwMDAwMDMzMDgyMjUwMDAwMDAwMDM5MDgyMjUwMDAwMDAwMDQ1MDgyMjUwMDAwMDAwMDkxMDgxOTUwMDAwMDAwMDk5MDgxOTUwMDAwMDAwMDExMzA4MTk1MDAwMDAwMDExOTA4MTk1MDAwMDAwMDExNjA4MTk1MDAwMDAwMDExOTA4MTk1MDAwMDAwMDExODA4MTk1MDAwMDAwMDEyMzA4MTk1MDAwMDAwMDEyNjA4MTk1MDAwMDAwMDEyOTA4MTk1MDAwMDAwMDEzMjA4MTk1MDAwMDAwMDEzNTA4MTk1MDAwMDAwMDEzODA4MTk1MDAwMDAwMDE0MTA4MTk1MDAwMDAwMDE0NDA4MTk1MDAwMDAwMDE0NzA4MTk1MDAwMDAwMDE1MzA4MTk1MDAwMDAwMDE1NjA4MTk1MDAwMDAwMDE1OTA4MTk1MDAwMDAwMDE2MjA4MTk1MDAwMDAwMDE2NTA4MTk1MDAwMDAwMDE2ODA4MTk1MDAwMDAwMDE3MzA4MTk1MDAwMDAwMDE3NjA4MTk1MDAwMDAwMDE3OTA4MTk1MDAwMDAwMDE4MjA4MTk1MDAwMDAwMDE4NTA4MTk1MDAwMDAwMDE4ODA4MTk1MDAwMDAwMDE5MTA4MTk1MDAwMDAwMDE5NDA4MTk1MDAwMDAwMDE5NzA4MTk1MDAwMDAwMDIwMzA4MTk1MDAwMDAwMDIwNjA4MTk1MDAwMDAwMDIwOTA4MTk1MDAwMDAwMDIxMjA4MTk1MDAwMDAwMDIxNTA4MTk1MDAwMDAwMDIxODA4MTk1MDAwMDAwMDIyMzA4MTk1MDAwMDAwMDIyNjA4MTk1MDAwMDAwMDIyOTA4MTk1MDAwMDAwMDIzMjA4MTk1MDAwMDAwMDIzNTA4MTk1MDAwMDAwMDIzODA4MTk1MDAwMDAwMDI0MTA4MTk1MDAwMDAwMDI0NDA4MTk1MDAwMDAwMDI0NzA4MTk1MDAwMDAwMDI1MzA4MTk1MDAwMDAwMDI1NjA4MTk1MDAwMDAwMDI1OTA4MTk1MDAwMDAwMDI2MjA4MTk1MDAwMDAwMDI2NTA4MTk1MDAwMDAwMDI2ODA4MTk1MDAwMDAwMDI3MzA4MTk1MDAwMDAwMDI3NjA4MTk1MDAwMDAwMDI3OTA4MTk1MDAwMDAwMDI4MjA4MTk1MDAwMDAwMDI4NTA4MTk1MDAwMDAwMDI4ODA4MTk1MDAwMDAwMDI intermediate base64 placeholder... (using your logo code)" width="130" style="display: block;">
+            <img src="https://upload.wikimedia.org/wikipedia/ar/archive/3/36/20211124190901%21TVTC_Logo.png" width="130" style="display: block;">
             <div class="text-center">
                 <h5 class="mb-1 fw-bold">المملكة العربية السعودية</h5>
                 <p class="mb-1 small">المؤسسة العامة للتدريب التقني والمهني</p>
@@ -98,7 +102,7 @@
             </tr>
             <tr>
                 <td width="55%">الفصل التدريبي: <span id="pdf_term"></span></td>
-                <td width="45%">تواصل المتدرب: <span id="pdf_whatsapp_link">---</span></td>
+                <td width="45%">تواصل: <span id="pdf_whatsapp_link">---</span></td>
             </tr>
         </table>
         <div class="status-header-box">الحالة: <span id="pdf_status_text"></span></div>
@@ -153,28 +157,33 @@
         };
     });
 
-    const WA_ICON_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="#25D366"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.246 2.248 3.484 5.232 3.484 8.412 0 6.556-5.338 11.892-11.893 11.892-1.997-.001-3.951-.5-5.688-1.448l-6.309 1.656zm5.223-4.604c1.62 1.07 3.512 1.635 5.45 1.636 5.625 0 10.206-4.579 10.209-10.204.002-2.725-1.061-5.286-3.002-7.227-1.933-1.932-4.5-2.997-7.203-2.998-5.625 0-10.207 4.581-10.21 10.206-.001 2.051.528 4.02 1.543 5.751l-1.028 3.757 3.841-.921zm13.712-4.706c-.3-.15-1.77-.874-2.045-.973-.275-.099-.475-.149-.675.15-.2.299-.775.973-.95 1.173-.175.199-.35.224-.65.075-.3-.15-1.264-.466-2.408-1.486-.89-.793-1.49-1.772-1.665-2.071-.175-.299-.019-.462.131-.61.135-.133.3-.349.45-.523.15-.174.2-.299.3-.499.1-.199.05-.374-.025-.523-.075-.15-.675-1.624-.925-2.223-.244-.583-.493-.505-.675-.514-.175-.008-.375-.01-.575-.01-.2 0-.525.075-.8.374-.275.299-1.05.1.025-1.05 2.569 0 3.865.21 4.586.85 2.121.731 2.545 2.158 2.545 4.39 0 .151.049.3.224.449.175.15.35.224.65.075.3-.15 1.77-.874 2.045-.973.275-.099.475-.149.675.15.199.299.775.973.95 1.173.175.199.35.224.65.075.3-.15 1.264-.466 2.408-1.486.89-.793 1.49-1.772 1.665-2.071z"/></svg>`;
+    // أيقونة الواتساب الخضراء SVG
+    const WA_ICON_HTML = `<svg class="wa-btn-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="#25D366"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.246 2.248 3.484 5.232 3.484 8.412 0 6.556-5.338 11.892-11.893 11.892-1.997-.001-3.951-.5-5.688-1.448l-6.309 1.656zm5.223-4.604c1.62 1.07 3.512 1.635 5.45 1.636 5.625 0 10.206-4.579 10.209-10.204.002-2.725-1.061-5.286-3.002-7.227-1.933-1.932-4.5-2.997-7.203-2.998-5.625 0-10.207 4.581-10.21 10.206-.001 2.051.528 4.02 1.543 5.751l-1.028 3.757 3.841-.921zm13.712-4.706c-.3-.15-1.77-.874-2.045-.973-.275-.099-.475-.149-.675.15-.2.299-.775.973-.95 1.173-.175.199-.35.224-.65.075-.3-.15-1.264-.466-2.408-1.486-.89-.793-1.49-1.772-1.665-2.071-.175-.299-.019-.462.131-.61.135-.133.3-.349.45-.523.15-.174.2-.299.3-.499.1-.199.05-.374-.025-.523-.075-.15-.675-1.624-.925-2.223-.244-.583-.493-.505-.675-.514-.175-.008-.375-.01-.575-.01-.2 0-.525.075-.8.374-.275.299-1.05.1.025-1.05 2.569 0 3.865.21 4.586.85 2.121.731 2.545 2.158 2.545 4.39 0 .151.049.3.224.449.175.15.35.224.65.075.3-.15 1.77-.874 2.045-.973.275-.099.475-.149.675.15.199.299.775.973.95 1.173.175.199.35.224.65.075.3-.15 1.264-.466 2.408-1.486.89-.793 1.49-1.772 1.665-2.071z"/></svg>`;
 
-    function createWALink(phone, traineeName, courses) {
-        if(!phone) return "#";
-        let cleanPhone = phone.toString().replace(/[^0-9]/g, '');
-        if(cleanPhone.startsWith('5')) cleanPhone = '966' + cleanPhone;
-
+    function openWhatsApp(phone, traineeName, courses) {
+        if(!phone) { alert("عفواً، لا يوجد رقم جوال مسجل لهذا المتدرب"); return; }
+        
         let hermanList = courses.filter(c => c.val >= 19.5).map(c => c.name);
         let dangerList = courses.filter(c => c.val >= 9.5 && c.val < 19.5).map(c => c.name);
         
         let msg = `السلام عليكم يا متدربنا: ${traineeName}\n\n`;
+        
         if (hermanList.length > 0) {
-            msg += `❗ نود إشعارك بالحرمان في المقررات التالية لتجاوز نسبة الغياب:\n- ${hermanList.join('\n- ')}\n\n`;
+            msg += `❗ نود إحاطتك علماً بأنه قد تم حرمانك في المقررات التالية لتجاوزك نسبة الغياب المسموحة:\n- ${hermanList.join('\n- ')}\n\n`;
         }
         if (dangerList.length > 0) {
-            msg += `⚠️ تنبيه: غيابك في مرحلة الخطر في المقررات:\n- ${dangerList.join('\n- ')}\nالرجاء الانضباط لتجنب الحرمان.\n\n`;
+            msg += `⚠️ تنبيه هام: لقد وصل غيابك لمرحلة الخطر في المقررات:\n- ${dangerList.join('\n- ')}\nنرجو منك الانضباط فوراً لتجنب الحرمان.\n\n`;
         }
         if (hermanList.length === 0 && dangerList.length === 0) {
-            msg += `✅ نشكرك على انضباطك واهتمامك، غيابك في جميع المقررات آمن. استمر! 🌟\n\n`;
+            msg += `✅ نتقدم لك بالشكر الجزيل على انضباطك واهتمامك، فنسبة غيابك في جميع المقررات آمنة ولله الحمد. استمر في تميزك! 🌟\n\n`;
         }
-        msg += `مدربك: م. عادل الشمري`;
-        return `https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`;
+        
+        msg += `مع تحيات مدربك: م. عادل الشمري`;
+        
+        let cleanPhone = phone.toString().replace(/[^0-9]/g, '');
+        if(cleanPhone.startsWith('5')) cleanPhone = '966' + cleanPhone;
+        
+        window.open(`https://api.whatsapp.com/send?phone=${cleanPhone}&text=${encodeURIComponent(msg)}`, '_blank');
     }
 
     function updateFilteredReport() {
@@ -189,14 +198,19 @@
             thead.innerHTML = `<tr><th style="width:30pt;">م</th><th style="width:190pt;text-align:right;padding-right:10pt;">اسم المتدرب</th><th style="width:80pt;">الرقم</th><th style="width:50pt;">ساعات</th><th style="width:90pt;">الحالة</th><th style="width:50pt;">تواصل</th></tr>`;
             document.getElementById('pdf_course').innerText = rawData[0]['اسم المقرر'] || "---";
             document.getElementById('pdf_section').innerText = rawData[0]['أرقام شعب المقرر'] || "---";
-            document.getElementById('pdf_whatsapp_link').innerText = "عبر الجدول";
+            document.getElementById('pdf_whatsapp_link').innerText = "عبر الجدول بالأسفل";
 
             rawData.forEach(r => {
                 let h = parseFloat(r['إجمالي ساعات الغياب بدون عذر'] || 0);
                 let s = h >= 4 ? "حرمان 🚫" : h == 3 ? "خطر مرتفع ⚠️" : h == 2 ? "خطر بسيط 🟡" : "آمن ✅";
-                let url = createWALink(r['الجوال'] || r['رقم الجوال'], r['اسم المتدرب'], [{name: rawData[0]['اسم المقرر'], val: h * 5}]);
                 if(filter === 'all' || s.includes(filter)) {
-                    tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right; padding-right:10pt;">${r['اسم المتدرب']}</td><td>${r['رقم المتدرب']}</td><td>${h}</td><td class="fw-bold">${s}</td><td><a href="${url}" target="_blank" class="wa-btn">${WA_ICON_SVG}</a></td></tr>`;
+                    let tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${count++}</td><td style="text-align:right; padding-right:10pt;">${r['اسم المتدرب']}</td><td>${r['رقم المتدرب']}</td><td>${h}</td><td class="fw-bold">${s}</td><td class="wa-td"></td>`;
+                    let waCell = tr.querySelector('.wa-td');
+                    let waBtn = document.createElement('div'); waBtn.className = "wa-btn-icon"; waBtn.innerHTML = WA_ICON_HTML;
+                    waBtn.onclick = () => openWhatsApp(r['الجوال'] || r['رقم الجوال'], r['اسم المتدرب'], [{name: rawData[0]['اسم المقرر'], val: h * 5}]);
+                    waCell.appendChild(waBtn);
+                    tbody.appendChild(tr);
                 }
             });
         } else {
@@ -204,21 +218,25 @@
             document.getElementById('pdf_course').innerText = rawData[0]['اسم المتدرب'] || "---";
             document.getElementById('pdf_section').innerText = rawData[0]['رقم المتدرب'] || "---";
 
-            let courses = [];
+            let studentCourses = [];
             rawData.forEach(r => {
                 let pN = parseFloat(r['إجمالي نسبة الغياب النظري بدون عذر'] || 0);
                 let pA = parseFloat(r['إجمالي نسبة الغياب العملي بدون عذر'] || 0);
                 let pT = parseFloat(r['إجمالي نسبة الغياب بدون عذر'] || 0);
-                let maxVal = Math.max(pN, pA, pT);
-                let s = maxVal >= 19.5 ? "حرمان 🚫" : maxVal >= 14.5 ? "خطر مرتفع ⚠️" : maxVal >= 9.5 ? "خطر بسيط 🟡" : "آمن ✅";
-                courses.push({name: r['اسم المقرر'], val: maxVal});
+                let maxP = Math.max(pN, pA, pT);
+                let s = maxP >= 19.5 ? "حرمان 🚫" : maxP >= 14.5 ? "خطر مرتفع ⚠️" : maxP >= 9.5 ? "خطر بسيط 🟡" : "آمن ✅";
+                studentCourses.push({name: r['اسم المقرر'], val: maxP});
 
                 if(filter === 'all' || s.includes(filter)) {
                     tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right; padding-right:10pt; font-size:9pt;">${r['اسم المقرر']}</td><td>${r['أرقام شعب المقرر']}</td><td dir="ltr" style="${pN>=9.5?'color:red':''}">${pN}%</td><td dir="ltr" style="${pA>=9.5?'color:red':''}">${pA}%</td><td class="fw-bold">${s}</td></tr>`;
                 }
             });
-            let finalUrl = createWALink(rawData[0]['الجوال'] || rawData[0]['رقم الجوال'], rawData[0]['اسم المتدرب'], courses);
-            document.getElementById('pdf_whatsapp_link').innerHTML = `<a href="${finalUrl}" target="_blank" class="wa-btn">${WA_ICON_SVG}</a>`;
+            
+            let waLinkBox = document.getElementById('pdf_whatsapp_link');
+            waLinkBox.innerHTML = '';
+            let waBtn = document.createElement('div'); waBtn.className = "wa-btn-icon"; waBtn.style.display="inline-block"; waBtn.innerHTML = WA_ICON_HTML + " تواصل";
+            waBtn.onclick = () => openWhatsApp(rawData[0]['الجوال'] || rawData[0]['رقم الجوال'], rawData[0]['اسم المتدرب'], studentCourses);
+            waLinkBox.appendChild(waBtn);
         }
         
         document.getElementById('pdf_unit').innerText = rawData[0]['اسم الوحدة'] || "كلية القريات";
