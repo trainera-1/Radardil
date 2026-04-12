@@ -17,11 +17,13 @@
         #app-screen { display: none; padding-bottom: 50px; }
         .header-section { background: linear-gradient(135deg, #004d4d, var(--primary)); color: white; padding: 40px 15px; border-radius: 0 0 40px 40px; text-align: center; position: relative; }
 
+        /* تنسيق التقرير للـ PDF - هندسي ومستقيم 100% */
         #report-template { 
             display: none; padding: 35pt; background: white; width: 595pt; margin: 20px auto; color: #000; box-shadow: 0 0 15px rgba(0,0,0,0.1); border: 1px solid #ddd;
         }
         .report-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2pt solid var(--gold); padding-bottom: 10pt; margin-bottom: 20pt; }
         
+        /* هندسة الجدول العلوي - تقسيم 55% و 45% لضمان الاستقامة التامة */
         .info-table { width: 100%; border: 2pt solid #000; border-collapse: collapse; table-layout: fixed; }
         .info-table td { padding: 8pt; border: 1.5pt solid #000; font-weight: bold; font-size: 10.5pt; text-align: right; overflow: hidden; white-space: nowrap; }
         
@@ -31,12 +33,12 @@
         .data-table th, .data-table td { border: 1.5pt solid #000; padding: 6pt 3pt; text-align: center; font-size: 9.5pt; vertical-align: middle; }
         .data-table th { background: #eeeeee; font-weight: bold; }
         
-        .btn-view { background: var(--primary); color: white; border: none; border-radius: 12px; padding: 12px; font-weight: bold; flex: 1; margin: 5px; cursor: pointer; transition: 0.3s; }
-        .btn-download { background: var(--gold); color: white; border: none; border-radius: 12px; padding: 12px; font-weight: bold; flex: 1; margin: 5px; cursor: pointer; transition: 0.3s; }
+        .btn-view { background: var(--primary); color: white; border: none; border-radius: 12px; padding: 12px; font-weight: bold; flex: 1; margin: 5px; cursor: pointer; }
+        .btn-download { background: var(--gold); color: white; border: none; border-radius: 12px; padding: 12px; font-weight: bold; flex: 1; margin: 5px; cursor: pointer; }
         .btn-mode { background: white; color: var(--primary); border: 2px solid var(--primary); border-radius: 15px; padding: 15px; font-size: 1.1rem; font-weight: bold; transition: 0.3s; cursor: pointer; width: 100%; display: block; margin-bottom: 15px; }
         .btn-mode:hover { background: var(--primary); color: white; transform: scale(1.02); }
         
-        .wa-icon { color: #25D366; text-decoration: none; font-size: 13pt; font-weight: bold; }
+        .wa-icon { color: #25D366; text-decoration: none; font-size: 12pt; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -44,7 +46,7 @@
 <div id="welcome-screen" class="full-screen">
     <div class="main-card shadow">
         <h2 class="fw-bold mb-4" style="color: var(--primary);">أهلاً بك في رادار الغياب</h2>
-        <p class="mb-4">أداة تحليل الغياب الذكية لمساعدة المدربين - الكلية التقنية بالقريات</p>
+        <p class="mb-4">الأداة الذكية لمساعدة المدربين في تحليل الغياب - الكلية التقنية بالقريات</p>
         <div class="alert alert-warning border-0 small mb-4">للملاحظات: <b>م. عادل الشمري | 0505596106</b></div>
         <button class="btn btn-primary px-5 py-2 rounded-pill shadow" onclick="goScreen('mode-screen')">التالي ➜</button>
     </div>
@@ -128,12 +130,19 @@
     let rawData = [];
     let currentMode = 'course';
 
+    // تم تعديل هذه الدالة لحل مشكلة التعليق ومسح اسم الملف
     function goScreen(screenId) {
         document.getElementById('welcome-screen').style.display = 'none';
         document.getElementById('mode-screen').style.display = 'none';
         document.getElementById('app-screen').style.display = 'none';
         document.getElementById('action-area').style.display = 'none';
         document.getElementById('report-template').style.display = 'none';
+        
+        // تصفير خانة الملف ومسح البيانات
+        const fileInput = document.getElementById('upload');
+        if(fileInput) fileInput.value = ""; 
+        rawData = [];
+
         if(screenId === 'welcome-screen') document.getElementById('welcome-screen').style.display = 'flex';
         if(screenId === 'mode-screen') document.getElementById('mode-screen').style.display = 'flex';
         if(screenId === 'app-screen') document.getElementById('app-screen').style.display = 'block';
@@ -148,12 +157,16 @@
     }
     
     document.getElementById('upload').addEventListener('change', function(e) {
+        if(!e.target.files.length) return;
         const reader = new FileReader();
         reader.readAsArrayBuffer(e.target.files[0]);
         reader.onload = function(e) {
             const wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
             rawData = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-            if(rawData.length > 0) { updateFilteredReport(); document.getElementById('action-area').style.display = 'block'; }
+            if(rawData.length > 0) { 
+                updateFilteredReport(); 
+                document.getElementById('action-area').style.display = 'block'; 
+            }
         };
     });
 
@@ -189,7 +202,7 @@
                 let h = parseFloat(r['إجمالي ساعات الغياب بدون عذر'] || 0);
                 let s = h >= 4 ? "حرمان 🚫" : h == 3 ? "خطر مرتفع ⚠️" : h == 2 ? "خطر بسيط 🟡" : "آمن ✅";
                 if(filter === 'all' || s.includes(filter)) {
-                    tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right;padding-right:10pt;">${r['اسم المتدرب']}</td><td>${r['رقم المتدرب']}</td><td>${h}</td><td class="fw-bold">${s}</td><td>${getWALink(r['الجوال'] || r['رقم الجوال'])}</td></tr>`;
+                    tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right; padding-right:10pt;">${r['اسم المتدرب']}</td><td>${r['رقم المتدرب']}</td><td>${h}</td><td class="fw-bold">${s}</td><td>${getWALink(r['الجوال'] || r['رقم الجوال'])}</td></tr>`;
                 }
             });
         } else {
@@ -205,7 +218,7 @@
                 let maxP = Math.max(pNathari, pAmali, pTotal);
                 let s = getTraineeStatus(maxP);
                 if(filter === 'all' || s.includes(filter)) {
-                    tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right;padding-right:10pt;">${r['اسم المقرر']}</td><td>${r['أرقام شعب المقرر']}</td><td dir="ltr" style="${pNathari>=9.5?'color:red':''}">${pNathari}%</td><td dir="ltr" style="${pAmali>=9.5?'color:red':''}">${pAmali}%</td><td class="fw-bold">${s}</td></tr>`;
+                    tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right; padding-right:10pt; font-size:9pt;">${r['اسم المقرر']}</td><td>${r['أرقام شعب المقرر']}</td><td dir="ltr" style="${pNathari>=9.5?'color:red':''}">${pNathari}%</td><td dir="ltr" style="${pAmali>=9.5?'color:red':''}">${pAmali}%</td><td class="fw-bold">${s}</td></tr>`;
                 }
             });
         }
@@ -226,7 +239,7 @@
     function downloadPDF() {
         const element = document.getElementById('report-template');
         element.style.display = 'block';
-        const opt = { margin: 0, filename: 'رادار_الغياب.pdf', image: { type: 'jpeg', quality: 1 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' } };
+        const opt = { margin: 0.1, filename: 'رادار_الغياب.pdf', image: { type: 'jpeg', quality: 1 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' } };
         html2pdf().set(opt).from(element).save();
     }
 </script>
