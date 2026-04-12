@@ -8,47 +8,44 @@
     <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        :root { --primary-dark: #004d4d; --primary-main: #006666; --gold-accent: #a4854d; --bg-light: #f1f5f9; --table-header: #f8fafc; }
-        body { background-color: var(--bg-light); font-family: 'Segoe UI', Tahoma, sans-serif; transition: all 0.3s ease; margin: 0; }
+        :root { --primary-main: #006666; --gold-accent: #a4854d; --bg-light: #f8fafc; }
+        body { background-color: var(--bg-light); font-family: 'Segoe UI', Tahoma, sans-serif; }
         
-        /* شاشة الترحيب والشرح */
-        #welcome-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; text-align: center; padding: 20px; }
+        /* شاشة الترحيب */
+        #welcome-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; text-align: center; }
         .welcome-card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 600px; border-top: 8px solid var(--primary-main); }
 
-        /* واجهة العمل */
         #app-screen { display: none; }
-        .header-section { background: linear-gradient(135deg, var(--primary-dark), var(--primary-main)); color: white; padding: 40px 15px; border-radius: 0 0 40px 40px; }
-        .control-card { background: white; border-radius: 20px; padding: 25px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .header-section { background: linear-gradient(135deg, #004d4d, var(--primary-main)); color: white; padding: 40px 15px; border-radius: 0 0 40px 40px; }
 
-        /* تنسيق التقرير للـ PDF - رسمي، ملون، ومستقيم */
+        /* تنسيق التقرير النهائي - معالجة الميول والقص */
         #report-template { 
             display: none; 
-            padding: 20px; 
+            padding: 30px; 
             background: white; 
-            width: 794px; /* العرض المثالي لصفحة A4 (Fit Width) */
+            width: 790px; /* العرض الثابت لورقة A4 */
             margin: 0 auto;
             color: #000;
         }
-        .report-header { border-bottom: 2px solid var(--gold-accent); padding-bottom: 10px; margin-bottom: 20px; height: 100px; }
-        .info-table { width: 100%; border: 2px solid #000; border-collapse: collapse; table-layout: fixed; }
-        .info-table td { padding: 8px; border: 1px solid #000; font-weight: bold; font-size: 13px; text-overflow: ellipsis; }
+        .report-header { border-bottom: 2px solid var(--gold-accent); padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
         
-        .status-header-box { border: 2px solid #000; border-top: none; background: #f0f0f0; text-align: center; padding: 8px; font-weight: bold; width: 65%; margin: 0 auto 20px; border-radius: 0 0 15px 15px; color: var(--primary-dark); }
-
-        .data-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-        .data-table th, .data-table td { border: 1px solid #000; padding: 8px 4px; text-align: center; font-size: 12px; overflow: hidden; vertical-align: middle; }
-        .data-table th { background: linear-gradient(180deg, var(--table-header), #e2e8f0); color: var(--primary-dark); font-weight: bold; }
-        .data-table tr:nth-child(even) { background-color: #fafafa; } /* تدرج خلفية خفيف */
+        .info-table { width: 100%; border: 2.5px solid #000; border-collapse: collapse; table-layout: fixed; margin-bottom: 0; }
+        .info-table td { padding: 10px; border: 1.5px solid #000; font-weight: bold; font-size: 14px; text-align: right; }
         
-        /* تحديد عرض الأعمدة لثبات الجدول - مستقيم 100% */
-        .col-m { width: 30px; }
-        .col-name { width: 200px; text-align: right; padding-right: 10px; }
-        .col-id { width: 100px; }
-        .col-hours { width: 60px; }
-        .col-status { width: 90px; }
+        .status-header-box { border: 2.5px solid #000; border-top: none; background: #f2f2f2; text-align: center; padding: 10px; font-weight: bold; width: 60%; margin: 0 auto 25px; border-radius: 0 0 20px 20px; font-size: 16px; }
 
-        .btn-pdf { background: var(--gold-accent); color: white; border-radius: 12px; padding: 12px 25px; border: none; font-weight: bold; width: 100%; }
-        [contenteditable="true"] { border-bottom: 1px dashed #ccc; }
+        .data-table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 2.5px solid #000; }
+        .data-table th, .data-table td { border: 1.5px solid #000; padding: 10px 5px; text-align: center; font-size: 13px; vertical-align: middle; }
+        .data-table th { background: #eeeeee; color: #000; }
+
+        /* تحديد العرض بدقة لمنع أي ميول */
+        .w-m { width: 35px; }
+        .w-name { width: 230px; }
+        .w-id { width: 100px; }
+        .w-hours { width: 70px; }
+        .w-status { width: 100px; }
+
+        .btn-pdf { background: var(--gold-accent); color: white; border-radius: 12px; padding: 15px; border: none; font-weight: bold; width: 100%; margin-top: 20px; font-size: 1.1rem; }
     </style>
 </head>
 <body>
@@ -56,13 +53,10 @@
 <div id="welcome-screen">
     <div class="welcome-card shadow">
         <h2 class="fw-bold mb-4" style="color: var(--primary-main);">أهلاً بك في رادار الغياب</h2>
-        <p class="mb-4" style="line-height: 1.8;">
-            هذه الأداة مصممة لخدمة المدربين في دراسة حالة المتدربين والحد من التسرب والحرمان فيما يخدم مصلحة المتدربين.
-        </p>
+        <p class="mb-4" style="line-height: 1.8;">هذه الأداة مصممة لخدمة المدربين في دراسة حالة المتدربين والحد من التسرب والحرمان فيما يخدم مصلحة المتدربين.</p>
         <div class="alert alert-warning border-0 small mb-4">
             ⚠️ <b>تنويه:</b> الأداة لا تزال تحت التجربة.<br>
-            في حال وجود ملاحظات يرجى التواصل مع: <br>
-            <b>م. عادل الشمري | 0505596106</b>
+            للملاحظات: <b>م. عادل الشمري | 0505596106</b>
         </div>
         <button class="btn btn-primary px-5 py-2 rounded-pill" onclick="goToApp()">التالي ➜</button>
     </div>
@@ -72,12 +66,12 @@
     <div class="header-section text-center shadow">
         <h2 class="fw-bold">رادار الغياب الذكي</h2>
         <div class="container mt-4" style="max-width: 500px;">
-            <input type="file" id="upload" class="form-control" />
+            <input type="file" id="upload" class="form-control" accept=".csv, .svc, .xlsx" />
         </div>
     </div>
 
     <div class="container mt-5" id="action-area" style="display:none; max-width: 500px;">
-        <div class="control-card shadow-sm border">
+        <div class="card p-4 border shadow-sm">
             <label class="form-label fw-bold">اختر نوع التقرير:</label>
             <select id="statusFilter" class="form-select mb-3" onchange="updateFilteredReport()">
                 <option value="all">جميع الحالات</option>
@@ -92,20 +86,20 @@
 </div>
 
 <div id="report-template">
-    <div class="d-flex justify-content-between align-items-center report-header">
-        <img src="https://upload.wikimedia.org/wikipedia/ar/archive/3/36/20211124190901%21TVTC_Logo.png" width="130" height="90" style="object-fit: contain;">
+    <div class="report-header">
+        <img src="https://i.ibb.co/Lzr9SjN/TVTC-Logo.png" width="140" style="display: block;">
         <div class="text-center">
-            <h5 class="mb-0 fw-bold">المملكة العربية السعودية</h5>
+            <h5 class="mb-1 fw-bold">المملكة العربية السعودية</h5>
             <p class="mb-1 small">المؤسسة العامة للتدريب التقني والمهني</p>
-            <h6 id="pdf_unit" style="font-weight: bold; color: var(--primary-dark);">---</h6>
+            <h6 id="pdf_unit" style="font-weight: bold; color: var(--primary-main);">---</h6>
         </div>
-        <div style="font-size: 11px;">التاريخ: <span id="pdf_date"></span></div>
+        <div style="font-size: 12px; font-weight: bold; width: 140px; text-align: left;">تاريخ الرصد: <span id="pdf_date"></span></div>
     </div>
 
     <table class="info-table">
         <tr>
-            <td>اسم المقرر: <span id="pdf_course"></span></td>
-            <td>الشعبة: <span id="pdf_section"></span></td>
+            <td width="55%">اسم المقرر الدراسي: <span id="pdf_course"></span></td>
+            <td width="45%">رقم الشعبة: <span id="pdf_section"></span></td>
         </tr>
         <tr>
             <td>القسم التدريبي: <span id="pdf_dept"></span></td>
@@ -118,26 +112,23 @@
     <table class="data-table">
         <thead>
             <tr>
-                <th class="col-m">م</th>
-                <th class="col-name">اسم المتدرب</th>
-                <th class="col-id">الرقم التدريبي</th>
-                <th class="col-hours">الساعات</th>
-                <th class="col-status">الحالة</th>
+                <th class="w-m">م</th>
+                <th class="w-name">اسم المتدرب</th>
+                <th class="w-id">الرقم التدريبي</th>
+                <th class="w-hours">الساعات</th>
+                <th class="w-status">الحالة</th>
             </tr>
         </thead>
         <tbody id="pdf_rows"></tbody>
     </table>
 
-    <div class="mt-4 d-flex justify-content-between px-3">
-        <div class="text-center"><b>مدرب المقرر</b><br><div style="width:160px; border-bottom:1px solid #000; margin-top:15px; height: 20px;"></div></div>
-        <div class="text-center"><b>التوقيع / المصادقة</b><br><div style="width:160px; border-bottom:1px solid #000; margin-top:15px; height: 20px;"></div></div>
+    <div class="mt-5 d-flex justify-content-between px-4">
+        <div class="text-center"><b>مدرب المقرر</b><br><div style="width:180px; border-bottom:2px solid #000; margin-top:20px;"></div></div>
+        <div class="text-center"><b>التوقيع / المصادقة</b><br><div style="width:180px; border-bottom:2px solid #000; margin-top:20px;"></div></div>
     </div>
 
-    <div class="mt-5 pt-3 text-center" style="border-top: 2px double #000; padding-top: 10px; font-weight: bold; font-size: 11px; line-height: 1.6;">
-        <p id="footer_msg" contenteditable="true">
-            تم تصميم هذه الأداة لخدمة المدربين في دراسة حالة المتدربين والحد من التسرب والحرمان فيما يخدم مصلحة المتدربين.<br>
-            الأداة تحت التجربة المستمرة | إعداد وتطوير: م/عادل الشمري
-        </p>
+    <div class="mt-5 pt-3 text-center" style="border-top: 2px double #000; font-size: 12px; font-weight: bold; line-height: 1.6;">
+        <p>تم تصميم هذه الأداة لخدمة المدربين في دراسة حالة المتدربين والحد من التسرب والحرمان فيما يخدم مصلحة المتدربين.<br>الأداة تحت التجربة المستمرة | إعداد وتطوير: م/عادل الشمري</p>
     </div>
 </div>
 
@@ -149,22 +140,18 @@
         const reader = new FileReader();
         reader.readAsArrayBuffer(e.target.files[0]);
         reader.onload = function(e) {
-            try {
-                const wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
-                rawData = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-                if(rawData.length > 0) {
-                    updateFilteredReport();
-                    document.getElementById('action-area').style.display = 'block';
-                }
-            } catch (err) { alert("خطأ في قراءة الملف، تأكد أنه ملف SVC/CSV صحيح."); }
+            const wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
+            rawData = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+            updateFilteredReport();
+            document.getElementById('action-area').style.display = 'block';
         };
     });
 
     function getStatus(h) {
-        if(h >= 4) return { text: "حرمان 🚫", cls: "text-danger" };
-        if(h == 3) return { text: "خطر عالي ⚠️", cls: "text-warning" };
-        if(h == 2) return { text: "خطر بسيط 🟡", cls: "text-info" };
-        return { text: "آمن ✅", cls: "text-success" };
+        if(h >= 4) return "حرمان 🚫";
+        if(h == 3) return "خطر عالي ⚠️";
+        if(h == 2) return "خطر بسيط 🟡";
+        return "آمن ✅";
     }
 
     function updateFilteredReport() {
@@ -185,8 +172,8 @@
         rawData.forEach(r => {
             let h = parseFloat(r['إجمالي ساعات الغياب بدون عذر'] || 0);
             let s = getStatus(h);
-            if(filter === 'all' || s.text.includes(filter)) {
-                tbody.innerHTML += `<tr><td>${count++}</td><td class="col-name">${r['اسم المتدرب']}</td><td>${r['رقم المتدرب']}</td><td style="font-weight:bold;">${h}</td><td class="col-status fw-bold ${s.cls}">${s.text}</td></tr>`;
+            if(filter === 'all' || s.includes(filter)) {
+                tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right; padding-right:10px;">${r['اسم المتدرب']}</td><td>${r['رقم المتدرب']}</td><td>${h}</td><td style="font-weight:bold;">${s}</td></tr>`;
             }
         });
         document.getElementById('pdf_status_text').innerText = filter === 'all' ? "تحليل جميع الحالات" : "تقرير حالة: " + filter;
@@ -195,16 +182,18 @@
     function downloadPDF() {
         const element = document.getElementById('report-template');
         element.style.display = 'block';
-        const section = document.getElementById('pdf_section').innerText;
         
         const opt = {
-            margin: 0.2, // هامش أمان بسيط
-            filename: `تقرير_غياب_شعبة_${section}.pdf`,
+            margin: 0.1,
+            filename: `رادار_الغياب_${document.getElementById('pdf_section').innerText}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
+            html2canvas: { scale: 3, useCORS: true, letterRendering: true },
             jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
         };
-        html2pdf().set(opt).from(element).save().then(() => element.style.display = 'none');
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            element.style.display = 'none';
+        });
     }
 </script>
 </body>
