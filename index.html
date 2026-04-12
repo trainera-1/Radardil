@@ -11,15 +11,12 @@
         :root { --primary: #006666; --gold: #a4854d; --bg-light: #f4f7f6; }
         body { background-color: var(--bg-light); font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; }
         
-        /* شاشات التنقل */
         .full-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; text-align: center; padding: 20px; }
         .main-card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 600px; border-top: 8px solid var(--primary); margin: auto; }
         
-        /* واجهة التطبيق */
         #app-screen { display: none; padding-bottom: 50px; }
         .header-section { background: linear-gradient(135deg, #004d4d, var(--primary)); color: white; padding: 40px 15px; border-radius: 0 0 40px 40px; text-align: center; position: relative; }
 
-        /* تنسيق التقرير للـ PDF - هندسي ومستقيم 100% */
         #report-template { 
             display: none; padding: 40pt; background: white; width: 595pt; margin: 30px auto; color: #000; box-shadow: 0 0 15px rgba(0,0,0,0.1); border: 1px solid #ddd;
         }
@@ -33,10 +30,6 @@
         .data-table th, .data-table td { border: 1.5pt solid #000; padding: 7pt 4pt; text-align: center; font-size: 10pt; vertical-align: middle; }
         .data-table th { background: #eeeeee; font-weight: bold; }
         
-        /* عرض الأعمدة بدقة */
-        .c-m { width: 30pt; } .c-name { width: 190pt; text-align: right !important; padding-right: 10pt !important; } .c-id { width: 90pt; } .c-h { width: 50pt; } .c-s { width: 80pt; }
-
-        /* الأزرار */
         .btn-view { background: var(--primary); color: white; border: none; border-radius: 12px; padding: 12px; font-weight: bold; flex: 1; margin: 5px; cursor: pointer; transition: 0.3s; }
         .btn-download { background: var(--gold); color: white; border: none; border-radius: 12px; padding: 12px; font-weight: bold; flex: 1; margin: 5px; cursor: pointer; transition: 0.3s; }
         .btn-view:hover, .btn-download:hover { opacity: 0.9; transform: scale(1.02); }
@@ -49,20 +42,17 @@
 <div id="welcome-screen" class="full-screen">
     <div class="main-card shadow">
         <h2 class="fw-bold mb-4" style="color: var(--primary);">أهلاً بك في رادار الغياب</h2>
-        <p class="mb-4" style="line-height: 1.8;">هذه الأداة مصممة لخدمة المدربين في دراسة حالة المتدربين والحد من التسرب والحرمان فيما يخدم مصلحة المتدربين.</p>
-        <div class="alert alert-warning border-0 small mb-4">
-            تنويه: الأداة تحت التجربة المستمرة.<br>
-            للملاحظات: <b>م. عادل الشمري | 0505596106</b>
-        </div>
+        <p class="mb-4" style="line-height: 1.8;">أداة مصممة لخدمة المدربين في تحليل حالات المتدربين بدقة والحد من نسب الحرمان.</p>
+        <div class="alert alert-warning border-0 small mb-4">للملاحظات: <b>م. عادل الشمري | 0505596106</b></div>
         <button class="btn btn-primary px-5 py-2 rounded-pill shadow" onclick="goScreen('mode-screen')">التالي ➜</button>
     </div>
 </div>
 
 <div id="mode-screen" class="full-screen" style="display:none;">
     <div class="main-card shadow w-100">
-        <h3 class="fw-bold mb-4" style="color: var(--primary);">اختر نوع التحليل</h3>
+        <h3 class="fw-bold mb-4" style="color: var(--primary);">اختر نوع التقرير</h3>
         <button class="btn-mode" onclick="setMode('course')">📚 تحليل غياب مقرر (شعبة كاملة)</button>
-        <button class="btn-mode" onclick="setMode('trainee')">👨‍🎓 بحث وتحليل غياب لمتدرب محدد</button>
+        <button class="btn-mode" onclick="setMode('trainee')">👨‍🎓 تحليل غياب متدرب (مقررات المتدرب)</button>
         <button class="btn btn-secondary px-4 rounded-pill mt-3" onclick="goScreen('welcome-screen')">العودة</button>
     </div>
 </div>
@@ -72,12 +62,8 @@
         <button class="btn btn-sm btn-light position-absolute" style="top:20px; right:20px; font-weight:bold;" onclick="goScreen('mode-screen')">⬅ عودة</button>
         <h2 class="fw-bold" id="app-title">رادار الغياب الذكي</h2>
         <div class="container mt-4" style="max-width: 500px;">
+            <p class="mb-2 fw-bold text-warning" id="upload-hint">ارفع ملف الـ SVC الخاص بالشعبة</p>
             <input type="file" id="upload" class="form-control shadow-sm mb-3" style="border-radius:10px" />
-            
-            <div id="trainee-search-box" class="input-group shadow-sm" style="display:none; border-radius:10px;">
-                <input type="text" id="traineeSearchInput" class="form-control" placeholder="أدخل الرقم التدريبي أو اسم المتدرب..." style="border-radius:0 10px 10px 0;">
-                <button class="btn btn-warning fw-bold" onclick="updateFilteredReport()" style="border-radius:10px 0 0 10px;">بحث</button>
-            </div>
         </div>
     </div>
 
@@ -87,8 +73,8 @@
             <select id="statusFilter" class="form-select mb-4" onchange="updateFilteredReport()" style="border-radius:10px">
                 <option value="all">جميع الحالات</option>
                 <option value="حرمان">حرمان فقط</option>
-                <option value="خطر عالي">خطر عالي (3 غيابات فأكثر / 15%)</option>
-                <option value="خطر بسيط">خطر بسيط (2 غياب / 10%)</option>
+                <option value="خطر عالي">خطر عالي</option>
+                <option value="خطر بسيط">خطر بسيط</option>
                 <option value="آمن">آمن فقط</option>
             </select>
             <div class="d-flex">
@@ -120,26 +106,19 @@
         <div class="status-header-box">الحالة: <span id="pdf_status_text"></span></div>
 
         <table class="data-table">
-            <thead>
-                <tr>
-                    <th class="c-m">م</th>
-                    <th class="c-name" id="th_name">اسم المتدرب</th>
-                    <th class="c-id" id="th_id">الرقم التدريبي</th>
-                    <th class="c-h" id="th_val">الساعات</th>
-                    <th class="c-s">الحالة</th>
-                </tr>
-            </thead>
+            <thead id="pdf_thead">
+                </thead>
             <tbody id="pdf_rows"></tbody>
         </table>
 
         <div class="mt-5 d-flex justify-content-between px-4">
-            <div class="text-center"><b>مدرب المقرر</b><br><div style="width:160pt; border-bottom:1.5pt solid #000; margin-top:20px; height: 15pt;"></div></div>
+            <div class="text-center"><b>المدرب / المرشد</b><br><div style="width:160pt; border-bottom:1.5pt solid #000; margin-top:20px; height: 15pt;"></div></div>
             <div class="text-center"><b>التوقيع / المصادقة</b><br><div style="width:160pt; border-bottom:1.5pt solid #000; margin-top:20px; height: 15pt;"></div></div>
         </div>
 
         <div class="mt-5 pt-4 text-center" style="border-top: 2pt double #000; font-size: 11px; font-weight: bold; line-height: 1.6;">
             تم تصميم هذه الأداة لخدمة المدربين في دراسة حالة المتدربين والحد من التسرب والحرمان فيما يخدم مصلحة المتدربين.<br>
-            الأداة تحت التجربة المستمرة | إعداد وتطوير: م/عادل الشمري
+            إعداد وتطوير: م/عادل الشمري
         </div>
     </div>
 </div>
@@ -148,7 +127,6 @@
     let rawData = [];
     let currentMode = 'course';
 
-    // إدارة الشاشات
     function goScreen(screenId) {
         document.getElementById('welcome-screen').style.display = 'none';
         document.getElementById('mode-screen').style.display = 'none';
@@ -157,7 +135,6 @@
         
         if(screenId === 'app-screen' || screenId === 'mode-screen') {
             document.getElementById('upload').value = '';
-            document.getElementById('traineeSearchInput').value = '';
             rawData = [];
         }
         
@@ -166,46 +143,35 @@
         if(screenId === 'app-screen') document.getElementById('app-screen').style.display = 'block';
     }
 
-    // إعداد نوع التقرير
     function setMode(mode) {
         currentMode = mode;
         goScreen('app-screen');
-        
         if(mode === 'trainee') {
             document.getElementById('app-title').innerText = 'رادار الغياب - تحليل متدرب';
-            document.getElementById('trainee-search-box').style.display = 'flex';
+            document.getElementById('upload-hint').innerText = 'ارفع ملف الـ SVC الخاص بالمتدرب';
             document.getElementById('lbl_c_t').innerText = 'اسم المتدرب: ';
             document.getElementById('lbl_s_i').innerText = 'الرقم التدريبي: ';
-            document.getElementById('th_name').innerText = 'اسم المقرر';
-            document.getElementById('th_id').innerText = 'رقم الشعبة';
-            document.getElementById('th_val').innerText = 'النسبة';
         } else {
             document.getElementById('app-title').innerText = 'رادار الغياب - تحليل مقرر';
-            document.getElementById('trainee-search-box').style.display = 'none';
+            document.getElementById('upload-hint').innerText = 'ارفع ملف الـ SVC الخاص بالشعبة';
             document.getElementById('lbl_c_t').innerText = 'اسم المقرر الدراسي: ';
             document.getElementById('lbl_s_i').innerText = 'رقم الشعبة: ';
-            document.getElementById('th_name').innerText = 'اسم المتدرب';
-            document.getElementById('th_id').innerText = 'الرقم التدريبي';
-            document.getElementById('th_val').innerText = 'الساعات';
         }
     }
     
-    // رفع الملف
     document.getElementById('upload').addEventListener('change', function(e) {
         const reader = new FileReader();
         reader.readAsArrayBuffer(e.target.files[0]);
         reader.onload = function(e) {
             const wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
             rawData = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-            if(rawData.length > 0 && currentMode === 'course') {
+            if(rawData.length > 0) {
                 updateFilteredReport();
-            } else if (rawData.length > 0 && currentMode === 'trainee') {
-                document.getElementById('action-area').style.display = 'none'; // ننتظر البحث
+                document.getElementById('action-area').style.display = 'block';
             }
         };
     });
 
-    // قواعد غياب المقرر بالساعات
     function getCourseStatus(h) {
         if(h >= 4) return "حرمان 🚫";
         if(h == 3) return "خطر عالي ⚠️";
@@ -213,7 +179,6 @@
         return "آمن ✅";
     }
 
-    // قواعد غياب المتدرب بالنسبة المئوية
     function getTraineeStatus(p) {
         if(p >= 20) return "حرمان 🚫";
         if(p >= 15) return "خطر عالي ⚠️";
@@ -221,63 +186,76 @@
         return "آمن ✅";
     }
 
-    // بناء وتصفية التقرير
     function updateFilteredReport() {
         if(rawData.length === 0) return;
         const filter = document.getElementById('statusFilter').value;
+        const thead = document.getElementById('pdf_thead');
         const tbody = document.getElementById('pdf_rows'); 
         tbody.innerHTML = '';
         let count = 1;
-        let targetData = [];
 
         if (currentMode === 'course') {
-            targetData = rawData;
-            document.getElementById('pdf_course').innerText = targetData[0]['اسم المقرر'] || "---";
-            document.getElementById('pdf_section').innerText = targetData[0]['أرقام شعب المقرر'] || "---";
+            thead.innerHTML = `<tr>
+                <th style="width: 30pt;">م</th>
+                <th style="width: 200pt; text-align: right; padding-right: 10pt;">اسم المتدرب</th>
+                <th style="width: 90pt;">الرقم التدريبي</th>
+                <th style="width: 60pt;">الساعات</th>
+                <th style="width: 90pt;">الحالة</th>
+            </tr>`;
+
+            document.getElementById('pdf_course').innerText = rawData[0]['اسم المقرر'] || "---";
+            document.getElementById('pdf_section').innerText = rawData[0]['أرقام شعب المقرر'] || "---";
             
-            targetData.forEach(r => {
+            rawData.forEach(r => {
                 let h = parseFloat(r['إجمالي ساعات الغياب بدون عذر'] || 0);
                 let s = getCourseStatus(h);
                 if(filter === 'all' || s.includes(filter)) {
-                    tbody.innerHTML += `<tr><td>${count++}</td><td class="c-name">${r['اسم المتدرب'] || '-'}</td><td>${r['رقم المتدرب'] || '-'}</td><td>${h}</td><td class="fw-bold">${s}</td></tr>`;
+                    tbody.innerHTML += `<tr>
+                        <td>${count++}</td>
+                        <td style="text-align: right; padding-right: 10pt;">${r['اسم المتدرب'] || '-'}</td>
+                        <td>${r['رقم المتدرب'] || '-'}</td>
+                        <td style="font-weight:bold;">${h}</td>
+                        <td class="fw-bold">${s}</td>
+                    </tr>`;
                 }
             });
-            document.getElementById('action-area').style.display = 'block';
 
         } else {
-            const searchTerm = document.getElementById('traineeSearchInput').value.trim().toLowerCase();
-            if(!searchTerm) { alert("الرجاء إدخال الرقم التدريبي أو اسم المتدرب للبحث!"); return; }
-            
-            targetData = rawData.filter(r => 
-                (r['رقم المتدرب'] && r['رقم المتدرب'].toString().includes(searchTerm)) || 
-                (r['اسم المتدرب'] && r['اسم المتدرب'].toString().toLowerCase().includes(searchTerm))
-            );
-            
-            if(targetData.length === 0) {
-                alert("لم يتم العثور على المتدرب في هذا الملف.");
-                document.getElementById('action-area').style.display = 'none';
-                return;
-            }
+            thead.innerHTML = `<tr>
+                <th style="width: 30pt;">م</th>
+                <th style="width: 170pt; text-align: right; padding-right: 10pt;">اسم المقرر</th>
+                <th style="width: 60pt;">الشعبة</th>
+                <th style="width: 65pt;">نظري %</th>
+                <th style="width: 65pt;">عملي %</th>
+                <th style="width: 80pt;">الحالة</th>
+            </tr>`;
 
-            document.getElementById('pdf_course').innerText = targetData[0]['اسم المتدرب'] || "---";
-            document.getElementById('pdf_section').innerText = targetData[0]['رقم المتدرب'] || "---";
+            document.getElementById('pdf_course').innerText = rawData[0]['اسم المتدرب'] || "---";
+            document.getElementById('pdf_section').innerText = rawData[0]['رقم المتدرب'] || "---";
 
-            targetData.forEach(r => {
-                let p = parseFloat(r['إجمالي نسبة الغياب بدون عذر'] || 0);
-                let s = getTraineeStatus(p);
+            rawData.forEach(r => {
+                let pTheory = parseFloat(r['إجمالي نسبة الغياب النظري بدون عذر'] || 0);
+                let pPractical = parseFloat(r['إجمالي نسبة الغياب العملي بدون عذر'] || 0);
+                let pTotal = parseFloat(r['إجمالي نسبة الغياب بدون عذر'] || 0);
+                
+                let s = getTraineeStatus(pTotal);
                 if(filter === 'all' || s.includes(filter)) {
-                    tbody.innerHTML += `<tr><td>${count++}</td><td class="c-name">${r['اسم المقرر'] || '-'}</td><td>${r['أرقام شعب المقرر'] || '-'}</td><td dir="ltr">${p}%</td><td class="fw-bold">${s}</td></tr>`;
+                    tbody.innerHTML += `<tr>
+                        <td>${count++}</td>
+                        <td style="text-align: right; padding-right: 10pt; font-size: 9.5pt;">${r['اسم المقرر'] || '-'}</td>
+                        <td>${r['أرقام شعب المقرر'] || '-'}</td>
+                        <td dir="ltr" style="font-weight:bold;">${pTheory}%</td>
+                        <td dir="ltr" style="font-weight:bold;">${pPractical}%</td>
+                        <td class="fw-bold">${s}</td>
+                    </tr>`;
                 }
             });
-            document.getElementById('action-area').style.display = 'block';
         }
 
-        // إعداد الترويسة الثابتة
-        const fMain = targetData[0] || rawData[0];
-        document.getElementById('pdf_unit').innerText = fMain['اسم الوحدة'] || "كلية القريات";
-        document.getElementById('pdf_dept').innerText = fMain['اسم القسم'] || "---";
-        document.getElementById('pdf_major').innerText = fMain['اسم التخصص'] || "---";
-        document.getElementById('pdf_term').innerText = fMain['الفصل التدريبي'] || "---";
+        document.getElementById('pdf_unit').innerText = rawData[0]['اسم الوحدة'] || "كلية القريات";
+        document.getElementById('pdf_dept').innerText = rawData[0]['اسم القسم'] || "---";
+        document.getElementById('pdf_major').innerText = rawData[0]['اسم التخصص'] || "---";
+        document.getElementById('pdf_term').innerText = rawData[0]['الفصل التدريبي'] || "---";
         document.getElementById('pdf_date').innerText = new Date().toLocaleDateString('ar-SA');
         document.getElementById('pdf_status_text').innerText = filter === 'all' ? "تحليل جميع الحالات" : "تقرير حالة: " + filter;
     }
@@ -291,9 +269,8 @@
     function downloadPDF() {
         const element = document.getElementById('report-template');
         element.style.display = 'block';
-        
         let fName = currentMode === 'course' ? `غياب_شعبة_${document.getElementById('pdf_section').innerText}.pdf` : `غياب_متدرب_${document.getElementById('pdf_section').innerText}.pdf`;
-
+        
         const opt = {
             margin: 0,
             filename: fName,
