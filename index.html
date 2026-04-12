@@ -14,6 +14,8 @@
         .welcome-card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 600px; border-top: 8px solid var(--primary); }
         #app-screen { display: none; padding-bottom: 50px; }
         .header-section { background: linear-gradient(135deg, #004d4d, var(--primary)); color: white; padding: 40px 15px; border-radius: 0 0 40px 40px; text-align: center; }
+        
+        /* تنسيق التقرير النهائي - ثبات كامل */
         #report-template { 
             display: none; padding: 30pt; background: white; width: 595pt; margin: 30px auto; color: #000; box-shadow: 0 0 20px rgba(0,0,0,0.1); border: 1px solid #ccc;
         }
@@ -62,7 +64,7 @@
 
     <div id="report-template">
         <div class="report-header">
-            <img src="https://i.ibb.co/Lzr9SjN/TVTC-Logo.png" width="130" style="display: block;">
+            <img src="https://upload.wikimedia.org/wikipedia/ar/archive/3/36/20211124190901%21TVTC_Logo.png" width="130" style="display: block;">
             <div class="text-center">
                 <h5 class="mb-1 fw-bold">المملكة العربية السعودية</h5>
                 <p class="mb-1 small">المؤسسة العامة للتدريب التقني والمهني</p>
@@ -141,7 +143,7 @@
         element.style.display = 'block';
         const opt = {
             margin: 0,
-            filename: `تقرير_غياب_${document.getElementById('pdf_section').innerText}.pdf`,
+            filename: `رادار_الغياب_${document.getElementById('pdf_section').innerText}.pdf`,
             image: { type: 'jpeg', quality: 1 },
             html2canvas: { scale: 2, useCORS: true },
             jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' }
