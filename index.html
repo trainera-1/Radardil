@@ -42,7 +42,7 @@
 <div id="welcome-screen" class="full-screen">
     <div class="main-card shadow">
         <h2 class="fw-bold mb-4" style="color: var(--primary);">أهلاً بك في رادار الغياب</h2>
-        <p class="mb-4" style="line-height: 1.8;">أداة مصممة لخدمة المدربين في تحليل حالات المتدربين بدقة والحد من نسب الحرمان.</p>
+        <p class="mb-4" style="line-height: 1.8;">أداة متطورة مصممة لخدمة المدربين في تحليل حالات الغياب بدقة بناءً على أنظمة المؤسسة العامة للتدريب التقني والمهني.</p>
         <div class="alert alert-warning border-0 small mb-4">للملاحظات: <b>م. عادل الشمري | 0505596106</b></div>
         <button class="btn btn-primary px-5 py-2 rounded-pill shadow" onclick="goScreen('mode-screen')">التالي ➜</button>
     </div>
@@ -62,8 +62,8 @@
         <button class="btn btn-sm btn-light position-absolute" style="top:20px; right:20px; font-weight:bold;" onclick="goScreen('mode-screen')">⬅ عودة</button>
         <h2 class="fw-bold" id="app-title">رادار الغياب الذكي</h2>
         <div class="container mt-4" style="max-width: 500px;">
-            <p class="mb-2 fw-bold text-warning" id="upload-hint">ارفع ملف الـ SVC الخاص بالشعبة</p>
-            <input type="file" id="upload" class="form-control shadow-sm mb-3" style="border-radius:10px" />
+            <p class="mb-2 fw-bold text-warning" id="upload-hint">ارفع ملف الـ SVC</p>
+            <input type="file" id="upload" class="form-control shadow-sm mb-3" style="border-radius:10px" accept=".csv, .svc, .xlsx" />
         </div>
     </div>
 
@@ -73,7 +73,7 @@
             <select id="statusFilter" class="form-select mb-4" onchange="updateFilteredReport()" style="border-radius:10px">
                 <option value="all">جميع الحالات</option>
                 <option value="حرمان">حرمان فقط</option>
-                <option value="خطر عالي">خطر عالي</option>
+                <option value="خطر مرتفع">خطر مرتفع</option>
                 <option value="خطر بسيط">خطر بسيط</option>
                 <option value="آمن">آمن فقط</option>
             </select>
@@ -106,8 +106,7 @@
         <div class="status-header-box">الحالة: <span id="pdf_status_text"></span></div>
 
         <table class="data-table">
-            <thead id="pdf_thead">
-                </thead>
+            <thead id="pdf_thead"></thead>
             <tbody id="pdf_rows"></tbody>
         </table>
 
@@ -117,7 +116,6 @@
         </div>
 
         <div class="mt-5 pt-4 text-center" style="border-top: 2pt double #000; font-size: 11px; font-weight: bold; line-height: 1.6;">
-            تم تصميم هذه الأداة لخدمة المدربين في دراسة حالة المتدربين والحد من التسرب والحرمان فيما يخدم مصلحة المتدربين.<br>
             إعداد وتطوير: م/عادل الشمري
         </div>
     </div>
@@ -132,12 +130,6 @@
         document.getElementById('mode-screen').style.display = 'none';
         document.getElementById('app-screen').style.display = 'none';
         document.getElementById('action-area').style.display = 'none';
-        
-        if(screenId === 'app-screen' || screenId === 'mode-screen') {
-            document.getElementById('upload').value = '';
-            rawData = [];
-        }
-        
         if(screenId === 'welcome-screen') document.getElementById('welcome-screen').style.display = 'flex';
         if(screenId === 'mode-screen') document.getElementById('mode-screen').style.display = 'flex';
         if(screenId === 'app-screen') document.getElementById('app-screen').style.display = 'block';
@@ -147,12 +139,12 @@
         currentMode = mode;
         goScreen('app-screen');
         if(mode === 'trainee') {
-            document.getElementById('app-title').innerText = 'رادار الغياب - تحليل متدرب';
-            document.getElementById('upload-hint').innerText = 'ارفع ملف الـ SVC الخاص بالمتدرب';
+            document.getElementById('app-title').innerText = 'تحليل غياب متدرب';
+            document.getElementById('upload-hint').innerText = 'ارفع ملف الـ SVC الخاص بالمتدرب الموحد';
             document.getElementById('lbl_c_t').innerText = 'اسم المتدرب: ';
             document.getElementById('lbl_s_i').innerText = 'الرقم التدريبي: ';
         } else {
-            document.getElementById('app-title').innerText = 'رادار الغياب - تحليل مقرر';
+            document.getElementById('app-title').innerText = 'تحليل غياب شعبة';
             document.getElementById('upload-hint').innerText = 'ارفع ملف الـ SVC الخاص بالشعبة';
             document.getElementById('lbl_c_t').innerText = 'اسم المقرر الدراسي: ';
             document.getElementById('lbl_s_i').innerText = 'رقم الشعبة: ';
@@ -172,17 +164,19 @@
         };
     });
 
+    // منطق الحالة للمقرر (ساعات)
     function getCourseStatus(h) {
         if(h >= 4) return "حرمان 🚫";
-        if(h == 3) return "خطر عالي ⚠️";
+        if(h == 3) return "خطر مرتفع ⚠️";
         if(h == 2) return "خطر بسيط 🟡";
         return "آمن ✅";
     }
 
-    function getTraineeStatus(p) {
-        if(p >= 20) return "حرمان 🚫";
-        if(p >= 15) return "خطر عالي ⚠️";
-        if(p >= 10) return "خطر بسيط 🟡";
+    // منطق الحالة للمتدرب (نسبة مئوية) - يأخذ أعلى قيمة بين الثلاث نسب
+    function getTraineeStatus(pMax) {
+        if(pMax >= 19.5) return "حرمان 🚫";
+        if(pMax >= 14.5) return "خطر مرتفع ⚠️";
+        if(pMax >= 9.5) return "خطر بسيط 🟡";
         return "آمن ✅";
     }
 
@@ -195,14 +189,7 @@
         let count = 1;
 
         if (currentMode === 'course') {
-            thead.innerHTML = `<tr>
-                <th style="width: 30pt;">م</th>
-                <th style="width: 200pt; text-align: right; padding-right: 10pt;">اسم المتدرب</th>
-                <th style="width: 90pt;">الرقم التدريبي</th>
-                <th style="width: 60pt;">الساعات</th>
-                <th style="width: 90pt;">الحالة</th>
-            </tr>`;
-
+            thead.innerHTML = `<tr><th style="width:30pt;">م</th><th style="width:200pt;text-align:right;padding-right:10pt;">اسم المتدرب</th><th style="width:90pt;">الرقم التدريبي</th><th style="width:60pt;">الساعات</th><th style="width:90pt;">الحالة</th></tr>`;
             document.getElementById('pdf_course').innerText = rawData[0]['اسم المقرر'] || "---";
             document.getElementById('pdf_section').innerText = rawData[0]['أرقام شعب المقرر'] || "---";
             
@@ -210,48 +197,35 @@
                 let h = parseFloat(r['إجمالي ساعات الغياب بدون عذر'] || 0);
                 let s = getCourseStatus(h);
                 if(filter === 'all' || s.includes(filter)) {
-                    tbody.innerHTML += `<tr>
-                        <td>${count++}</td>
-                        <td style="text-align: right; padding-right: 10pt;">${r['اسم المتدرب'] || '-'}</td>
-                        <td>${r['رقم المتدرب'] || '-'}</td>
-                        <td style="font-weight:bold;">${h}</td>
-                        <td class="fw-bold">${s}</td>
-                    </tr>`;
+                    tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right;padding-right:10pt;">${r['اسم المتدرب']}</td><td>${r['رقم المتدرب']}</td><td style="font-weight:bold;">${h}</td><td class="fw-bold">${s}</td></tr>`;
                 }
             });
-
         } else {
-            thead.innerHTML = `<tr>
-                <th style="width: 30pt;">م</th>
-                <th style="width: 170pt; text-align: right; padding-right: 10pt;">اسم المقرر</th>
-                <th style="width: 60pt;">الشعبة</th>
-                <th style="width: 65pt;">نظري %</th>
-                <th style="width: 65pt;">عملي %</th>
-                <th style="width: 80pt;">الحالة</th>
-            </tr>`;
-
+            thead.innerHTML = `<tr><th style="width:30pt;">م</th><th style="width:170pt;text-align:right;padding-right:10pt;">اسم المقرر</th><th style="width:60pt;">الشعبة</th><th style="width:65pt;">نظري %</th><th style="width:65pt;">عملي %</th><th style="width:80pt;">الحالة</th></tr>`;
             document.getElementById('pdf_course').innerText = rawData[0]['اسم المتدرب'] || "---";
             document.getElementById('pdf_section').innerText = rawData[0]['رقم المتدرب'] || "---";
 
             rawData.forEach(r => {
-                let pTheory = parseFloat(r['إجمالي نسبة الغياب النظري بدون عذر'] || 0);
-                let pPractical = parseFloat(r['إجمالي نسبة الغياب العملي بدون عذر'] || 0);
+                let pNathari = parseFloat(r['إجمالي نسبة الغياب النظري بدون عذر'] || 0);
+                let pAmali = parseFloat(r['إجمالي نسبة الغياب العملي بدون عذر'] || 0);
                 let pTotal = parseFloat(r['إجمالي نسبة الغياب بدون عذر'] || 0);
                 
-                let s = getTraineeStatus(pTotal);
+                // القاعدة الجديدة: خذ أعلى نسبة من الثلاثة
+                let maxPercentage = Math.max(pNathari, pAmali, pTotal);
+                let s = getTraineeStatus(maxPercentage);
+
                 if(filter === 'all' || s.includes(filter)) {
                     tbody.innerHTML += `<tr>
                         <td>${count++}</td>
-                        <td style="text-align: right; padding-right: 10pt; font-size: 9.5pt;">${r['اسم المقرر'] || '-'}</td>
-                        <td>${r['أرقام شعب المقرر'] || '-'}</td>
-                        <td dir="ltr" style="font-weight:bold;">${pTheory}%</td>
-                        <td dir="ltr" style="font-weight:bold;">${pPractical}%</td>
+                        <td style="text-align:right;padding-right:10pt;font-size:9.5pt;">${r['اسم المقرر']}</td>
+                        <td>${r['أرقام شعب المقرر']}</td>
+                        <td dir="ltr" style="${pNathari >= 9.5 ? 'color:red;font-weight:bold;' : ''}">${pNathari}%</td>
+                        <td dir="ltr" style="${pAmali >= 9.5 ? 'color:red;font-weight:bold;' : ''}">${pAmali}%</td>
                         <td class="fw-bold">${s}</td>
                     </tr>`;
                 }
             });
         }
-
         document.getElementById('pdf_unit').innerText = rawData[0]['اسم الوحدة'] || "كلية القريات";
         document.getElementById('pdf_dept').innerText = rawData[0]['اسم القسم'] || "---";
         document.getElementById('pdf_major').innerText = rawData[0]['اسم التخصص'] || "---";
@@ -270,7 +244,6 @@
         const element = document.getElementById('report-template');
         element.style.display = 'block';
         let fName = currentMode === 'course' ? `غياب_شعبة_${document.getElementById('pdf_section').innerText}.pdf` : `غياب_متدرب_${document.getElementById('pdf_section').innerText}.pdf`;
-        
         const opt = {
             margin: 0,
             filename: fName,
