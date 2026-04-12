@@ -54,14 +54,15 @@
                 <option value="آمن">آمن فقط</option>
             </select>
             <div class="d-flex">
-                <button id="viewBtn" class="btn-view" onclick="previewReport()">👁️ عرض ومعاينة</button>
-                <button class="btn-download" onclick="downloadPDF()">📥 تنزيل التقرير</button>
+                <button id="viewBtn" class="btn-view shadow-sm" onclick="previewReport()">👁️ عرض ومعاينة</button>
+                <button class="btn-download shadow-sm" onclick="downloadPDF()">📥 تنزيل التقرير</button>
             </div>
         </div>
     </div>
+
     <div id="report-template">
         <div class="report-header">
-            <img id="logoImg" src="https://i.ibb.co/Lzr9SjN/TVTC-Logo.png" width="130" style="display: block;">
+            <img src="https://i.ibb.co/Lzr9SjN/TVTC-Logo.png" width="130" style="display: block;">
             <div class="text-center">
                 <h5 class="mb-1 fw-bold">المملكة العربية السعودية</h5>
                 <p class="mb-1 small">المؤسسة العامة للتدريب التقني والمهني</p>
@@ -132,9 +133,7 @@
     function previewReport() {
         const report = document.getElementById('report-template');
         report.style.display = 'block';
-        setTimeout(() => {
-            report.scrollIntoView({ behavior: 'smooth' });
-        }, 100);
+        setTimeout(() => { report.scrollIntoView({ behavior: 'smooth' }); }, 100);
     }
 
     function downloadPDF() {
