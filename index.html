@@ -52,7 +52,7 @@
         .official-header { border-bottom: 2pt solid var(--gold); margin-bottom: 10px; padding-bottom: 5px; }
         .official-header td { border: none; vertical-align: middle; }
         
-        /* جدول البيانات الثابتة (الصفحة الأولى) - تم تصغيره */
+        /* جدول البيانات الثابتة (الصفحة الأولى) */
         .info-table { border: 2pt solid #000; table-layout: fixed; margin-bottom: 10px; }
         .info-table td { padding: 4px 6px; border: 1.5pt solid #000; font-weight: bold; font-size: 9.5pt; text-align: right; }
         
@@ -156,7 +156,7 @@
             <table class="master-table">
                 <thead>
                     <tr>
-                        <td>
+                        <td style="padding-bottom: 12px;">
                             <table class="official-header">
                                 <tr>
                                     <td style="width: 35%; text-align: right;">
@@ -218,12 +218,21 @@
     let rawData = []; let currentMode = 'course';
     
     function goScreen(s) {
+        // إخفاء جميع الشاشات أولاً
         document.getElementById('welcome-screen').style.display='none'; 
         document.getElementById('mode-screen').style.display='none'; 
         document.getElementById('app-screen').style.display='none';
         document.getElementById('action-area').style.display='none'; 
         document.getElementById('report-template').style.display='none';
         
+        // تصفير الذاكرة تماماً لمسح التقرير القديم (حل المشكلة الثانية)
+        const fi = document.getElementById('upload');
+        if(fi) fi.value = "";
+        rawData = [];
+        document.getElementById('pdf_rows').innerHTML = '';
+        document.getElementById('pdf_thead').innerHTML = '';
+
+        // إظهار الشاشة المطلوبة
         if(s==='welcome-screen') document.getElementById('welcome-screen').style.display='flex';
         else if(s==='mode-screen') document.getElementById('mode-screen').style.display='flex';
         else document.getElementById('app-screen').style.display='block';
@@ -290,13 +299,11 @@
 
     function previewReport() { 
         document.getElementById('report-template').style.display = 'block'; 
-        // تمرير الشاشة بلطف لتظهر المعاينة واضحة
         setTimeout(() => {
             document.querySelector('.report-preview-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 100);
     }
 
-    // حفظ وطباعة PDF عبر نظام المتصفح المدمج
     function downloadPDF() { 
         previewReport(); 
         setTimeout(() => {
