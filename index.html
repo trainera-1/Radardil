@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>رادار الغياب - م. عادل الشمري</title>
+    <title>متابعة نسبة الغياب - م. عادل الشمري</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <script src="https://cdn.sheetjs.com/xlsx-0.19.3/package/dist/xlsx.full.min.js"></script>
     <style>
@@ -17,65 +17,91 @@
         .header-section { background: linear-gradient(135deg, #004d4d, var(--primary)); color: white; padding: 40px 15px; border-radius: 0 0 40px 40px; text-align: center; position: relative; }
         .btn-custom { border-radius: 12px; padding: 12px; font-weight: bold; margin: 5px; cursor: pointer; border: none; flex: 1; transition: 0.3s; }
         
-        /* تنسيقات المعاينة على الشاشة */
+        /* حاوية المعاينة (لحل مشكلة الميلان والقص في الجوال والشاشات) */
+        .report-preview-container {
+            width: 100%;
+            overflow-x: auto;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        /* تنسيقات المعاينة والطباعة للورقة A4 */
         #report-template { 
             display: none; 
-            padding: 20px; 
+            padding: 10mm; 
             background: white; 
-            max-width: 210mm; 
-            margin: 30px auto; 
+            width: 210mm !important; 
+            min-width: 210mm;
+            margin: 20px auto; 
             color: #000; 
             border: 1px solid #ddd;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            box-shadow: 0 0 15px rgba(0,0,0,0.15);
+            box-sizing: border-box;
         }
 
         /* الجداول العامة */
         table { width: 100%; border-collapse: collapse; }
         
-        /* الجدول الرئيسي لضمان تكرار الهيدر */
-        .master-table { border: none; }
+        /* الجدول الرئيسي لضمان تكرار الهيدر والفوتر */
+        .master-table { border: none; width: 100%; }
         .master-table > thead { display: table-header-group; }
         .master-table > tbody { display: table-row-group; }
+        .master-table > tfoot { display: table-footer-group; }
         
-        /* الترويسة (الهيدر الرسمي) المكررة */
-        .official-header { border-bottom: 2pt solid var(--gold); margin-bottom: 15px; padding-bottom: 10px; }
+        /* الترويسة المكررة (أصغر وأكثر تناسقاً) */
+        .official-header { border-bottom: 2pt solid var(--gold); margin-bottom: 10px; padding-bottom: 5px; }
         .official-header td { border: none; vertical-align: middle; }
         
-        /* جدول البيانات الثابتة (الصفحة الأولى) */
-        .info-table { border: 2pt solid #000; table-layout: fixed; margin-bottom: 15px; }
-        .info-table td { padding: 8px; border: 1.5pt solid #000; font-weight: bold; font-size: 11pt; text-align: right; }
+        /* جدول البيانات الثابتة (الصفحة الأولى) - تم تصغيره */
+        .info-table { border: 2pt solid #000; table-layout: fixed; margin-bottom: 10px; }
+        .info-table td { padding: 4px 6px; border: 1.5pt solid #000; font-weight: bold; font-size: 9.5pt; text-align: right; }
         
         /* صندوق الحالة */
-        .status-header-box { border: 2pt solid #000; border-top: none; background: #f2f2f2 !important; text-align: center; padding: 8px; font-weight: bold; width: 60%; margin: 0 auto 15px; border-radius: 0 0 15px 15px; font-size: 13pt; -webkit-print-color-adjust: exact; }
+        .status-header-box { border: 2pt solid #000; border-top: none; background: #f2f2f2 !important; text-align: center; padding: 6px; font-weight: bold; width: 55%; margin: 0 auto 12px; border-radius: 0 0 12px 12px; font-size: 11pt; -webkit-print-color-adjust: exact; }
         
         /* جدول غياب المتدربين */
         .data-table { border: 2pt solid #000; table-layout: fixed; }
-        .data-table th, .data-table td { border: 1.5pt solid #000; padding: 6px 3px; text-align: center; font-size: 10pt; vertical-align: middle; }
+        .data-table th, .data-table td { border: 1.5pt solid #000; padding: 5px 2px; text-align: center; font-size: 9pt; vertical-align: middle; }
         .data-table th { background: #eeeeee !important; font-weight: bold; -webkit-print-color-adjust: exact; }
 
-        /* ----------- السحر هنا: إعدادات الطباعة والـ PDF ----------- */
+        /* زينة أسفل كل صفحة (الفوتر الاحترافي) */
+        .page-footer-decoration {
+            margin-top: 15px;
+            padding-top: 5px;
+            text-align: center;
+        }
+        .footer-line {
+            height: 4px;
+            background: linear-gradient(to right, transparent, var(--primary), var(--gold), transparent);
+            border-radius: 5px;
+            margin-bottom: 6px;
+            opacity: 0.8;
+            -webkit-print-color-adjust: exact;
+        }
+        .footer-text {
+            font-size: 8.5pt;
+            font-weight: bold;
+            color: var(--primary);
+            opacity: 0.9;
+        }
+
+        /* إعدادات الطباعة الذكية للمتصفح */
         @media print {
-            /* إخفاء كل شيء في الشاشة ما عدا التقرير */
             body * { visibility: hidden; }
-            #report-template, #report-template * { visibility: visible; }
+            .report-preview-container, .report-preview-container * { visibility: visible; }
             #report-template { 
                 position: absolute; 
                 left: 0; 
                 top: 0; 
-                width: 100%; 
+                width: 100% !important; 
+                min-width: 100%;
                 margin: 0; 
                 padding: 0; 
                 border: none; 
                 box-shadow: none; 
             }
-            
-            /* إعداد حجم الورقة والهوامش */
-            @page { size: A4; margin: 12mm 10mm; }
-            
-            /* منع قطع الصفوف في منتصف الجدول */
+            @page { size: A4; margin: 10mm; }
             .data-table tr { page-break-inside: avoid; }
-            
-            /* فرض الألوان في الطباعة */
             * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
         }
     </style>
@@ -84,8 +110,8 @@
 
 <div id="welcome-screen" class="full-screen">
     <div class="main-card shadow">
-        <h2 class="fw-bold mb-4" style="color: var(--primary);">رادار الغياب</h2>
-        <p class="mb-4">الأداة الذكية المطورة للمدربين - الكلية التقنية بالقريات</p>
+        <h2 class="fw-bold mb-4" style="color: var(--primary);">متابعة نسبة الغياب</h2>
+        <p class="mb-4 text-muted fw-bold" style="line-height: 1.6;">أداة تساعد المدرب لمعرفة نسبة الغياب في شعبة وغياب متدرب معين للقيام بمهام الإرشاد وتعرضها بشكل بسيط</p>
         <div class="alert alert-warning border-0 small mb-4">إعداد وتطوير: <b>م. عادل الشمري | 0505596106</b></div>
         <button class="btn btn-primary px-5 py-2 rounded-pill shadow" onclick="goScreen('mode-screen')">دخول ➜</button>
     </div>
@@ -103,7 +129,7 @@
 <div id="app-screen">
     <div class="header-section shadow">
         <button class="btn btn-sm btn-light position-absolute" style="top:20px; right:20px; font-weight:bold;" onclick="goScreen('mode-screen')">⬅ عودة</button>
-        <h2 class="fw-bold" id="app-title">رادار الغياب</h2>
+        <h2 class="fw-bold" id="app-title">متابعة نسبة الغياب</h2>
         <div class="container mt-4" style="max-width: 500px;">
             <input type="file" id="upload" class="form-control shadow-sm mb-3" style="border-radius:10px" accept=".csv, .xlsx" />
         </div>
@@ -125,53 +151,66 @@
         </div>
     </div>
 
-    <div id="report-template">
-        <table class="master-table">
-            <thead>
-                <tr>
-                    <td>
-                        <table class="official-header">
-                            <tr>
-                                <td style="width: 35%; text-align: right;">
-                                    <img src="IMG_7496.png" width="190">
-                                </td>
-                                <td style="width: 30%; text-align: center;">
-                                    <h5 style="margin: 0; font-weight: bold; font-size: 14pt;">المملكة العربية السعودية</h5>
-                                    <p style="margin: 4px 0; font-size: 10pt;">المؤسسة العامة للتدريب التقني والمهني</p>
-                                    <p style="margin: 0; font-weight: bold; color: #006666; font-size: 12pt;">كلية القريات</p>
-                                </td>
-                                <td style="width: 35%; text-align: left; font-size: 10pt; font-weight: bold;">
-                                    تاريخ الرصد:<br><span id="pdf_date"></span>
-                                </td>
-                            </tr>
-                        </table>
-                    </td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <table class="info-table">
-                            <tr><td width="55%"><span id="lbl_c_t">اسم المقرر: </span> <span id="pdf_course"></span></td><td width="45%"><span id="lbl_s_i">رقم الشعبة: </span> <span id="pdf_section"></span></td></tr>
-                            <tr><td width="55%">القسم التدريبي: <span id="pdf_dept"></span></td><td width="45%">التخصص: <span id="pdf_major"></span></td></tr>
-                            <tr><td width="55%">الفصل التدريبي: <span id="pdf_term"></span></td><td width="45%">البريد الرسمي: <span id="pdf_contact_email">---</span></td></tr>
-                        </table>
-                        <div class="status-header-box">الحالة: <span id="pdf_status_text"></span></div>
+    <div class="report-preview-container">
+        <div id="report-template">
+            <table class="master-table">
+                <thead>
+                    <tr>
+                        <td>
+                            <table class="official-header">
+                                <tr>
+                                    <td style="width: 35%; text-align: right;">
+                                        <img src="IMG_7496.png" width="145">
+                                    </td>
+                                    <td style="width: 30%; text-align: center;">
+                                        <h5 style="margin: 0; font-weight: bold; font-size: 12pt;">المملكة العربية السعودية</h5>
+                                        <p style="margin: 3px 0; font-size: 8.5pt;">المؤسسة العامة للتدريب التقني والمهني</p>
+                                        <p style="margin: 0; font-weight: bold; color: #006666; font-size: 11pt;">كلية القريات</p>
+                                    </td>
+                                    <td style="width: 35%; text-align: left; font-size: 9pt; font-weight: bold;">
+                                        تاريخ الرصد:<br><span id="pdf_date"></span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </thead>
+                
+                <tbody>
+                    <tr>
+                        <td>
+                            <table class="info-table">
+                                <tr><td width="55%"><span id="lbl_c_t">اسم المقرر: </span> <span id="pdf_course"></span></td><td width="45%"><span id="lbl_s_i">رقم الشعبة: </span> <span id="pdf_section"></span></td></tr>
+                                <tr><td width="55%">القسم التدريبي: <span id="pdf_dept"></span></td><td width="45%">التخصص: <span id="pdf_major"></span></td></tr>
+                                <tr><td width="55%">الفصل التدريبي: <span id="pdf_term"></span></td><td width="45%">البريد الرسمي: <span id="pdf_contact_email">---</span></td></tr>
+                            </table>
+                            <div class="status-header-box">الحالة: <span id="pdf_status_text"></span></div>
 
-                        <table class="data-table">
-                            <thead id="pdf_thead"></thead>
-                            <tbody id="pdf_rows"></tbody>
-                        </table>
+                            <table class="data-table">
+                                <thead id="pdf_thead"></thead>
+                                <tbody id="pdf_rows"></tbody>
+                            </table>
 
-                        <div class="mt-5 d-flex justify-content-between px-4">
-                            <div class="text-center"><b>مدرب المقرر / المرشد</b><br><div style="width:140pt; border-bottom:1.5pt solid #000; margin-top:25px; height: 10pt;"></div></div>
-                            <div class="text-center"><b>التوقيع / المصادقة</b><br><div style="width:140pt; border-bottom:1.5pt solid #000; margin-top:25px; height: 10pt;"></div></div>
-                        </div>
-                        <div class="mt-4 pt-3 text-center" style="border-top: 1.5pt double #000; font-size: 9pt; font-weight: bold; opacity: 0.7;">إعداد وتطوير: م/عادل الشمري</div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                            <div class="mt-4 d-flex justify-content-between px-4" style="margin-bottom: 20px;">
+                                <div class="text-center"><b>مدرب المقرر / المرشد</b><br><div style="width:140pt; border-bottom:1.5pt solid #000; margin-top:20px; height: 10pt;"></div></div>
+                                <div class="text-center"><b>التوقيع / المصادقة</b><br><div style="width:140pt; border-bottom:1.5pt solid #000; margin-top:20px; height: 10pt;"></div></div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+
+                <tfoot>
+                    <tr>
+                        <td>
+                            <div class="page-footer-decoration">
+                                <div class="footer-line"></div>
+                                <div class="footer-text">إعداد وتطوير: م/عادل الشمري</div>
+                            </div>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
     </div>
 </div>
 
@@ -223,7 +262,7 @@
                 let h = parseFloat(r['إجمالي ساعات الغياب بدون عذر'] || 0);
                 let s = h >= 4 ? "حرمان 🚫" : h == 3 ? "خطر مرتفع ⚠️" : h == 2 ? "خطر بسيط 🟡" : "آمن ✅";
                 if(filter === 'all' || s.includes(filter)) {
-                    tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right;padding-right:5px;">${r['اسم المتدرب']}</td><td>${r['رقم المتدرب']}</td><td style="font-weight:bold;">${h}</td><td class="fw-bold">${s}</td><td style="font-size:9pt;" dir="ltr">${r['رقم المتدرب']}@tvtc.edu.sa</td></tr>`;
+                    tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right;padding-right:5px;">${r['اسم المتدرب']}</td><td>${r['رقم المتدرب']}</td><td style="font-weight:bold;">${h}</td><td class="fw-bold">${s}</td><td style="font-size:8.5pt;" dir="ltr">${r['رقم المتدرب']}@tvtc.edu.sa</td></tr>`;
                 }
             });
         } else {
@@ -251,14 +290,17 @@
 
     function previewReport() { 
         document.getElementById('report-template').style.display = 'block'; 
-        window.scrollTo({ top: document.getElementById('report-template').offsetTop - 20, behavior: 'smooth' });
+        // تمرير الشاشة بلطف لتظهر المعاينة واضحة
+        setTimeout(() => {
+            document.querySelector('.report-preview-container').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
     }
 
-    // الطريقة الاحترافية للطباعة وحفظ الـ PDF
+    // حفظ وطباعة PDF عبر نظام المتصفح المدمج
     function downloadPDF() { 
-        previewReport(); // إظهار التقرير أولاً
+        previewReport(); 
         setTimeout(() => {
-            window.print(); // تفعيل نافذة الطباعة المدمجة في الجهاز
+            window.print(); 
         }, 500);
     }
 </script>
