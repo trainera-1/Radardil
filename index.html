@@ -17,7 +17,6 @@
         #report-template { display: none; padding: 35pt; background: white; width: 595pt; margin: 20px auto; color: #000; border: 1px solid #ddd; }
         .report-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2pt solid var(--gold); padding-bottom: 10pt; margin-bottom: 20pt; }
         
-        /* هندسة الجداول العلوية - تقسيم 55% و 45% لضمان الاستقامة التامة */
         .info-table { width: 100%; border: 2pt solid #000; border-collapse: collapse; table-layout: fixed; }
         .info-table td { padding: 8pt; border: 1.5pt solid #000; font-weight: bold; font-size: 10pt; text-align: right; overflow: hidden; white-space: nowrap; }
         
@@ -75,7 +74,7 @@
 
     <div id="report-template">
         <div class="report-header">
-            <img src="logo.png" width="125" style="display: block; max-height: 80px; object-fit: contain;">
+            <img src="IMG_7496.png" width="130" style="display: block; max-height: 80px; object-fit: contain;">
             <div class="text-center">
                 <h5 class="mb-1 fw-bold">المملكة العربية السعودية</h5>
                 <p class="mb-1 small">المؤسسة العامة للتدريب التقني والمهني</p>
@@ -146,7 +145,10 @@
         reader.onload = function(e) {
             const wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
             rawData = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-            if(rawData.length > 0) { updateFilteredReport(); document.getElementById('action-area').style.display = 'block'; }
+            if(rawData.length > 0) { 
+                updateFilteredReport(); 
+                document.getElementById('action-area').style.display = 'block'; 
+            }
         };
     });
 
@@ -166,7 +168,7 @@
         let count = 1;
 
         if (currentMode === 'course') {
-            thead.innerHTML = `<tr><th style="width:30pt;">م</th><th style="width:170pt;text-align:right;padding-right:10pt;">اسم المتدرب</th><th style="width:80pt;">الرقم التدريبي</th><th style="width:45pt;">ساعات</th><th style="width:85pt;">الحالة</th><th style="width:135pt;">البريد الرسمي</th></tr>`;
+            thead.innerHTML = `<tr><th style="width:30pt;">م</th><th style="width:190pt;text-align:right;padding-right:10pt;">اسم المتدرب</th><th style="width:80pt;">الرقم التدريبي</th><th style="width:45pt;">ساعات</th><th style="width:85pt;">الحالة</th><th style="width:135pt;">البريد الرسمي</th></tr>`;
             document.getElementById('pdf_course').innerText = rawData[0]['اسم المقرر'] || "---";
             document.getElementById('pdf_section').innerText = rawData[0]['أرقام شعب المقرر'] || "---";
             document.getElementById('pdf_contact_email').innerText = "انظر الجدول بالأسفل";
