@@ -15,31 +15,42 @@
         #app-screen { display: none; padding-bottom: 50px; }
         .header-section { background: linear-gradient(135deg, #004d4d, var(--primary)); color: white; padding: 40px 15px; border-radius: 0 0 40px 40px; text-align: center; position: relative; }
         
-        /* ضبط مقاسات الورقة A4 بدقة مليمترية لمنع الميلان */
+        /* إعدادات ورقة A4 */
         #report-template { 
             display: none; 
             padding: 10mm; 
             background: white; 
-            width: 210mm; /* عرض A4 الحقيقي */
-            min-height: 297mm; 
-            margin: 20px auto; 
+            width: 210mm; 
+            margin: 10px auto; 
             color: #000; 
             box-sizing: border-box;
-            border: 1px solid #eee;
         }
-        
-        .header-table { width: 100%; border-bottom: 2pt solid var(--gold); margin-bottom: 15pt; border-collapse: collapse; }
-        .header-table td { border: none !important; vertical-align: middle; padding-bottom: 10pt; }
 
-        .info-table { width: 100%; border: 2pt solid #000; border-collapse: collapse; table-layout: fixed; margin-bottom: 10pt; }
-        .info-table td { padding: 8pt; border: 1.5pt solid #000; font-weight: bold; font-size: 10.5pt; text-align: right; overflow: hidden; white-space: nowrap; }
+        /* الجدول الرئيسي لضمان تكرار الهيدر */
+        .master-table { width: 100%; border-collapse: collapse; border: none; }
+        .master-table thead { display: table-header-group; } /* هذا السطر يكرر الهيدر في كل صفحة */
+
+        .report-header-content { 
+            width: 100%; 
+            border-bottom: 2.5pt solid var(--gold); 
+            margin-bottom: 10pt; 
+            padding-bottom: 10pt;
+        }
+
+        .header-table { width: 100%; border-collapse: collapse; }
+        .header-table td { border: none !important; vertical-align: middle; }
+
+        .info-table { width: 100%; border: 2pt solid #000; border-collapse: collapse; table-layout: fixed; margin-bottom: 15pt; }
+        .info-table td { padding: 7pt; border: 1.5pt solid #000; font-weight: bold; font-size: 10.5pt; text-align: right; }
         
         .status-header-box { border: 2pt solid #000; border-top: none; background: #f2f2f2; text-align: center; padding: 8pt; font-weight: bold; width: 60%; margin: 0 auto 15pt; border-radius: 0 0 15pt 15pt; font-size: 12pt; }
         
         .data-table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 2pt solid #000; }
-        .data-table th, .data-table td { border: 1.5pt solid #000; padding: 6pt 2pt; text-align: center; font-size: 9pt; vertical-align: middle; }
+        .data-table th, .data-table td { border: 1.5pt solid #000; padding: 5pt 2pt; text-align: center; font-size: 9pt; vertical-align: middle; word-wrap: break-word; }
         .data-table th { background: #eeeeee; font-weight: bold; }
-        .btn-custom { border-radius: 12px; padding: 12px; font-weight: bold; margin: 5px; cursor: pointer; border: none; flex: 1; transition: 0.3s; }
+
+        .signatures { margin-top: 30pt; display: flex; justify-content: space-between; padding: 0 30pt; }
+        .btn-custom { border-radius: 12px; padding: 12px; font-weight: bold; margin: 5px; cursor: pointer; border: none; flex: 1; }
     </style>
 </head>
 <body>
@@ -57,7 +68,7 @@
     <div class="main-card shadow w-100">
         <h3 class="fw-bold mb-4" style="color: var(--primary);">اختر نوع التقرير</h3>
         <button class="btn btn-outline-primary w-100 mb-3 p-3 fw-bold rounded-4" onclick="setMode('course')">📚 تحليل غياب شعبة (كاملة)</button>
-        <button class="btn btn-outline-primary w-100 mb-3 p-3 fw-bold rounded-4" onclick="setMode('trainee')">👨‍🎓 تحليل غياب متدرب (mفصل)</button>
+        <button class="btn btn-outline-primary w-100 mb-3 p-3 fw-bold rounded-4" onclick="setMode('trainee')">👨‍🎓 تحليل غياب متدرب</button>
         <button class="btn btn-secondary px-4 rounded-pill mt-3" onclick="goScreen('welcome-screen')">العودة</button>
     </div>
 </div>
@@ -88,39 +99,56 @@
     </div>
 
     <div id="report-template">
-        <table class="header-table">
-            <tr>
-                <td style="width: 35%; text-align: right;">
-                    <img src="IMG_7496.png" width="190" style="display: block;">
-                </td>
-                <td style="width: 30%; text-align: center;">
-                    <h5 style="margin: 0; font-weight: bold; font-size: 13pt;">المملكة العربية السعودية</h5>
-                    <p style="margin: 3pt 0; font-size: 9pt;">المؤسسة العامة للتدريب التقني والمهني</p>
-                    <h6 id="pdf_unit" style="margin: 0; font-weight: bold; color: var(--primary); font-size: 10pt;">---</h6>
-                </td>
-                <td style="width: 35%; text-align: left; font-size: 9pt; font-weight: bold;">
-                    تاريخ الرصد:<br><span id="pdf_date"></span>
-                </td>
-            </tr>
-        </table>
+        <table class="master-table">
+            <thead>
+                <tr>
+                    <td>
+                        <div class="report-header-content">
+                            <table class="header-table">
+                                <tr>
+                                    <td style="width: 35%; text-align: right;">
+                                        <img src="IMG_7496.png" width="190">
+                                    </td>
+                                    <td style="width: 30%; text-align: center;">
+                                        <h5 style="margin: 0; font-weight: bold; font-size: 13pt;">المملكة العربية السعودية</h5>
+                                        <p style="margin: 3pt 0; font-size: 9pt;">المؤسسة العامة للتدريب التقني والمهني</p>
+                                        <p style="margin: 0; font-weight: bold; color: #006666; font-size: 10.5pt;">كلية القريات</p>
+                                    </td>
+                                    <td style="width: 35%; text-align: left; font-size: 9.5pt; font-weight: bold;">
+                                        تاريخ الرصد:<br><span id="pdf_date"></span>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div id="first-page-info">
+                            <table class="info-table">
+                                <tr><td width="55%"><span id="lbl_c_t">اسم المقرر: </span> <span id="pdf_course"></span></td><td width="45%"><span id="lbl_s_i">رقم الشعبة: </span> <span id="pdf_section"></span></td></tr>
+                                <tr><td width="55%">القسم التدريبي: <span id="pdf_dept"></span></td><td width="45%">التخصص: <span id="pdf_major"></span></td></tr>
+                                <tr><td width="55%">الفصل التدريبي: <span id="pdf_term"></span></td><td width="45%">البريد الرسمي: <span id="pdf_contact_email">---</span></td></tr>
+                            </table>
+                            <div class="status-header-box">الحالة: <span id="pdf_status_text"></span></div>
+                        </div>
 
-        <table class="info-table">
-            <tr><td width="55%"><span id="lbl_c_t">اسم المقرر: </span> <span id="pdf_course"></span></td><td width="45%"><span id="lbl_s_i">رقم الشعبة: </span> <span id="pdf_section"></span></td></tr>
-            <tr><td width="55%">القسم التدريبي: <span id="pdf_dept"></span></td><td width="45%">التخصص: <span id="pdf_major"></span></td></tr>
-            <tr><td width="55%">الفصل التدريبي: <span id="pdf_term"></span></td><td width="45%">البريد الرسمي: <span id="pdf_contact_email">---</span></td></tr>
-        </table>
-        <div class="status-header-box">الحالة: <span id="pdf_status_text"></span></div>
+                        <table class="data-table">
+                            <thead id="pdf_thead"></thead>
+                            <tbody id="pdf_rows"></tbody>
+                        </table>
 
-        <table class="data-table">
-            <thead id="pdf_thead"></thead>
-            <tbody id="pdf_rows"></tbody>
+                        <div class="signatures">
+                            <div class="text-center"><b>مدرب المقرر / المرشد</b><br><div style="width:140pt; border-bottom:1.5pt solid #000; margin-top:25px; height: 10pt;"></div></div>
+                            <div class="text-center"><b>التوقيع / المصادقة</b><br><div style="width:140pt; border-bottom:1.5pt solid #000; margin-top:25px; height: 10pt;"></div></div>
+                        </div>
+                        <div class="mt-4 pt-3 text-center" style="border-top: 1.5pt double #000; font-size: 8.5pt; font-weight: bold; opacity: 0.6;">إعداد وتطوير: م/عادل الشمري</div>
+                    </td>
+                </tr>
+            </tbody>
         </table>
-
-        <div class="mt-5 d-flex justify-content-between px-4">
-            <div class="text-center"><b>مدرب المقرر / المرشد</b><br><div style="width:160pt; border-bottom:1.5pt solid #000; margin-top:20px; height: 15pt;"></div></div>
-            <div class="text-center"><b>التوقيع / المصادقة</b><br><div style="width:160pt; border-bottom:1.5pt solid #000; margin-top:20px; height: 15pt;"></div></div>
-        </div>
-        <div class="mt-5 pt-4 text-center" style="border-top: 2pt double #000; font-size: 9px; font-weight: bold; opacity: 0.6;">إعداد وتطوير: م/عادل الشمري</div>
     </div>
 </div>
 
@@ -154,7 +182,7 @@
         const thead = document.getElementById('pdf_thead'); const tbody = document.getElementById('pdf_rows'); 
         tbody.innerHTML = ''; let count = 1;
         if (currentMode === 'course') {
-            thead.innerHTML = `<tr><th style="width:30pt;">م</th><th style="width:170pt;text-align:right;padding-right:10pt;">اسم المتدرب</th><th style="width:85pt;">الرقم التدريبي</th><th style="width:40pt;">ساعات</th><th style="width:80pt;">الحالة</th><th style="width:130pt;">البريد الرسمي</th></tr>`;
+            thead.innerHTML = `<tr><th style="width:25pt;">م</th><th style="width:160pt;text-align:right;padding-right:8pt;">اسم المتدرب</th><th style="width:80pt;">الرقم التدريبي</th><th style="width:35pt;">ساعات</th><th style="width:75pt;">الحالة</th><th style="width:130pt;">البريد الرسمي</th></tr>`;
             document.getElementById('pdf_course').innerText = rawData[0]['اسم المقرر'] || "---";
             document.getElementById('pdf_section').innerText = rawData[0]['أرقام شعب المقرر'] || "---";
             document.getElementById('pdf_contact_email').innerText = "انظر الجدول بالأسفل";
@@ -162,11 +190,11 @@
                 let h = parseFloat(r['إجمالي ساعات الغياب بدون عذر'] || 0);
                 let s = h >= 4 ? "حرمان 🚫" : h == 3 ? "خطر مرتفع ⚠️" : h == 2 ? "خطر بسيط 🟡" : "آمن ✅";
                 if(filter === 'all' || s.includes(filter)) {
-                    tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right;padding-right:10pt;">${r['اسم المتدرب']}</td><td>${r['رقم المتدرب']}</td><td>${h}</td><td class="fw-bold">${s}</td><td style="font-size:8pt; direction:ltr;">${r['رقم المتدرب']}@tvtc.edu.sa</td></tr>`;
+                    tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right;padding-right:8pt;">${r['اسم المتدرب']}</td><td>${r['رقم المتدرب']}</td><td>${h}</td><td class="fw-bold">${s}</td><td style="font-size:8pt; direction:ltr;">${r['رقم المتدرب']}@tvtc.edu.sa</td></tr>`;
                 }
             });
         } else {
-            thead.innerHTML = `<tr><th style="width:30pt;">م</th><th style="width:170pt;text-align:right;padding-right:10pt;">اسم المقرر</th><th style="width:60pt;">الشعبة</th><th style="width:60pt;">نظري %</th><th style="width:60pt;">عملي %</th><th style="width:80pt;">الحالة</th></tr>`;
+            thead.innerHTML = `<tr><th style="width:25pt;">م</th><th style="width:160pt;text-align:right;padding-right:8pt;">اسم المقرر</th><th style="width:60pt;">الشعبة</th><th style="width:55pt;">نظري %</th><th style="width:55pt;">عملي %</th><th style="width:75pt;">الحالة</th></tr>`;
             document.getElementById('pdf_course').innerText = rawData[0]['اسم المتدرب'] || "---";
             document.getElementById('pdf_section').innerText = rawData[0]['رقم المتدرب'] || "---";
             document.getElementById('pdf_contact_email').innerText = (rawData[0]['رقم المتدرب'] || "000") + "@tvtc.edu.sa";
@@ -175,7 +203,7 @@
                 let pT = parseFloat(r['إجمالي نسبة الغياب بدون عذر'] || 0); let maxP = Math.max(pN, pA, pT);
                 let s = maxP >= 19.5 ? "حرمان 🚫" : maxP >= 14.5 ? "خطر مرتفع ⚠️" : maxP >= 9.5 ? "خطر بسيط 🟡" : "آمن ✅";
                 if(filter === 'all' || s.includes(filter)) {
-                    tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right;padding-right:10pt;font-size:9pt;">${r['اسم المقرر']}</td><td>${r['أرقام شعب المقرر']}</td><td dir="ltr">${pN}%</td><td dir="ltr">${pA}%</td><td class="fw-bold">${s}</td></tr>`;
+                    tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right;padding-right:8pt;font-size:9pt;">${r['اسم المقرر']}</td><td>${r['أرقام شعب المقرر']}</td><td dir="ltr">${pN}%</td><td dir="ltr">${pA}%</td><td class="fw-bold">${s}</td></tr>`;
                 }
             });
         }
@@ -196,7 +224,7 @@
             margin: 0, 
             filename: 'رادار_الغياب_الرسمي.pdf', 
             image: { type: 'jpeg', quality: 1 }, 
-            html2canvas: { scale: 3, useCORS: true, scrollX: 0, scrollY: 0 }, 
+            html2canvas: { scale: 3, useCORS: true, scrollX: 0, scrollY: 0, letterRendering: true }, 
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
         }; 
         html2pdf().set(opt).from(element).save(); 
