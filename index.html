@@ -9,36 +9,35 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root { --primary: #006666; --gold: #a4854d; --bg-light: #f4f7f6; }
-        body { background-color: var(--bg-light); font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; }
+        body { background-color: var(--bg-light); font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 0; }
         .full-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; text-align: center; padding: 20px; }
         .main-card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 600px; border-top: 8px solid var(--primary); margin: auto; }
         #app-screen { display: none; padding-bottom: 50px; }
         .header-section { background: linear-gradient(135deg, #004d4d, var(--primary)); color: white; padding: 40px 15px; border-radius: 0 0 40px 40px; text-align: center; position: relative; }
         
-        /* تنسيق ورقة A4 الرسمية (الماكينة) */
+        /* ضبط مقاسات الورقة A4 بدقة مليمترية لمنع الميلان */
         #report-template { 
             display: none; 
-            padding: 30pt; 
+            padding: 10mm; 
             background: white; 
-            width: 595pt; 
-            min-height: 841pt; 
+            width: 210mm; /* عرض A4 الحقيقي */
+            min-height: 297mm; 
             margin: 20px auto; 
             color: #000; 
-            border: 1px solid #ddd;
+            box-sizing: border-box;
+            border: 1px solid #eee;
         }
         
-        /* جدول الهيدر - يمنع تداخل العناصر عند التحميل */
-        .header-table { width: 100%; border-bottom: 2pt solid var(--gold); margin-bottom: 20pt; border-collapse: collapse; }
-        .header-table td { border: none !important; vertical-align: middle; padding-bottom: 15pt; }
+        .header-table { width: 100%; border-bottom: 2pt solid var(--gold); margin-bottom: 15pt; border-collapse: collapse; }
+        .header-table td { border: none !important; vertical-align: middle; padding-bottom: 10pt; }
 
-        /* هندسة المسطرة للجداول */
-        .info-table { width: 100%; border: 2pt solid #000; border-collapse: collapse; table-layout: fixed; }
+        .info-table { width: 100%; border: 2pt solid #000; border-collapse: collapse; table-layout: fixed; margin-bottom: 10pt; }
         .info-table td { padding: 8pt; border: 1.5pt solid #000; font-weight: bold; font-size: 10.5pt; text-align: right; overflow: hidden; white-space: nowrap; }
         
-        .status-header-box { border: 2pt solid #000; border-top: none; background: #f2f2f2; text-align: center; padding: 8pt; font-weight: bold; width: 60%; margin: 0 auto 20pt; border-radius: 0 0 15pt 15pt; font-size: 12pt; }
+        .status-header-box { border: 2pt solid #000; border-top: none; background: #f2f2f2; text-align: center; padding: 8pt; font-weight: bold; width: 60%; margin: 0 auto 15pt; border-radius: 0 0 15pt 15pt; font-size: 12pt; }
         
         .data-table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 2pt solid #000; }
-        .data-table th, .data-table td { border: 1.5pt solid #000; padding: 6pt 3pt; text-align: center; font-size: 9.5pt; vertical-align: middle; }
+        .data-table th, .data-table td { border: 1.5pt solid #000; padding: 6pt 2pt; text-align: center; font-size: 9pt; vertical-align: middle; }
         .data-table th { background: #eeeeee; font-weight: bold; }
         .btn-custom { border-radius: 12px; padding: 12px; font-weight: bold; margin: 5px; cursor: pointer; border: none; flex: 1; transition: 0.3s; }
     </style>
@@ -58,7 +57,7 @@
     <div class="main-card shadow w-100">
         <h3 class="fw-bold mb-4" style="color: var(--primary);">اختر نوع التقرير</h3>
         <button class="btn btn-outline-primary w-100 mb-3 p-3 fw-bold rounded-4" onclick="setMode('course')">📚 تحليل غياب شعبة (كاملة)</button>
-        <button class="btn btn-outline-primary w-100 mb-3 p-3 fw-bold rounded-4" onclick="setMode('trainee')">👨‍🎓 تحليل غياب متدرب (مفصل)</button>
+        <button class="btn btn-outline-primary w-100 mb-3 p-3 fw-bold rounded-4" onclick="setMode('trainee')">👨‍🎓 تحليل غياب متدرب (mفصل)</button>
         <button class="btn btn-secondary px-4 rounded-pill mt-3" onclick="goScreen('welcome-screen')">العودة</button>
     </div>
 </div>
@@ -95,29 +94,20 @@
                     <img src="IMG_7496.png" width="190" style="display: block;">
                 </td>
                 <td style="width: 30%; text-align: center;">
-                    <h5 style="margin: 0; font-weight: bold; font-size: 14pt;">المملكة العربية السعودية</h5>
-                    <p style="margin: 5px 0; font-size: 10pt;">المؤسسة العامة للتدريب التقني والمهني</p>
-                    <h6 id="pdf_unit" style="margin: 0; font-weight: bold; color: var(--primary);">---</h6>
+                    <h5 style="margin: 0; font-weight: bold; font-size: 13pt;">المملكة العربية السعودية</h5>
+                    <p style="margin: 3pt 0; font-size: 9pt;">المؤسسة العامة للتدريب التقني والمهني</p>
+                    <h6 id="pdf_unit" style="margin: 0; font-weight: bold; color: var(--primary); font-size: 10pt;">---</h6>
                 </td>
-                <td style="width: 35%; text-align: left; font-size: 10pt; font-weight: bold;">
+                <td style="width: 35%; text-align: left; font-size: 9pt; font-weight: bold;">
                     تاريخ الرصد:<br><span id="pdf_date"></span>
                 </td>
             </tr>
         </table>
 
         <table class="info-table">
-            <tr>
-                <td width="55%"><span id="lbl_c_t">اسم المقرر: </span> <span id="pdf_course"></span></td>
-                <td width="45%"><span id="lbl_s_i">رقم الشعبة: </span> <span id="pdf_section"></span></td>
-            </tr>
-            <tr>
-                <td width="55%">القسم التدريبي: <span id="pdf_dept"></span></td>
-                <td width="45%">التخصص: <span id="pdf_major"></span></td>
-            </tr>
-            <tr>
-                <td width="55%">الفصل التدريبي: <span id="pdf_term"></span></td>
-                <td width="45%">البريد الرسمي: <span id="pdf_contact_email">---</span></td>
-            </tr>
+            <tr><td width="55%"><span id="lbl_c_t">اسم المقرر: </span> <span id="pdf_course"></span></td><td width="45%"><span id="lbl_s_i">رقم الشعبة: </span> <span id="pdf_section"></span></td></tr>
+            <tr><td width="55%">القسم التدريبي: <span id="pdf_dept"></span></td><td width="45%">التخصص: <span id="pdf_major"></span></td></tr>
+            <tr><td width="55%">الفصل التدريبي: <span id="pdf_term"></span></td><td width="45%">البريد الرسمي: <span id="pdf_contact_email">---</span></td></tr>
         </table>
         <div class="status-header-box">الحالة: <span id="pdf_status_text"></span></div>
 
@@ -130,87 +120,60 @@
             <div class="text-center"><b>مدرب المقرر / المرشد</b><br><div style="width:160pt; border-bottom:1.5pt solid #000; margin-top:20px; height: 15pt;"></div></div>
             <div class="text-center"><b>التوقيع / المصادقة</b><br><div style="width:160pt; border-bottom:1.5pt solid #000; margin-top:20px; height: 15pt;"></div></div>
         </div>
-        <div class="mt-5 pt-4 text-center" style="border-top: 2pt double #000; font-size: 10px; font-weight: bold;">إعداد وتطوير: م/عادل الشمري</div>
+        <div class="mt-5 pt-4 text-center" style="border-top: 2pt double #000; font-size: 9px; font-weight: bold; opacity: 0.6;">إعداد وتطوير: م/عادل الشمري</div>
     </div>
 </div>
 
 <script>
-    let rawData = [];
-    let currentMode = 'course';
-
-    function goScreen(screenId) {
-        document.getElementById('welcome-screen').style.display = 'none';
-        document.getElementById('mode-screen').style.display = 'none';
-        document.getElementById('app-screen').style.display = 'none';
-        document.getElementById('action-area').style.display = 'none';
-        document.getElementById('report-template').style.display = 'none';
-        const fileInput = document.getElementById('upload');
-        if(fileInput) fileInput.value = ""; 
-        rawData = [];
-        if(screenId === 'welcome-screen') document.getElementById('welcome-screen').style.display = 'flex';
-        if(screenId === 'mode-screen') document.getElementById('mode-screen').style.display = 'flex';
-        if(screenId === 'app-screen') document.getElementById('app-screen').style.display = 'block';
+    let rawData = []; let currentMode = 'course';
+    function goScreen(s) {
+        document.getElementById('welcome-screen').style.display='none'; document.getElementById('mode-screen').style.display='none'; document.getElementById('app-screen').style.display='none';
+        document.getElementById('action-area').style.display='none'; document.getElementById('report-template').style.display='none';
+        const fi = document.getElementById('upload'); if(fi) fi.value = ""; rawData = [];
+        if(s==='welcome-screen') document.getElementById('welcome-screen').style.display='flex';
+        if(s==='mode-screen') document.getElementById('mode-screen').style.display='flex';
+        if(s==='app-screen') document.getElementById('app-screen').style.display='block';
     }
-
-    function setMode(mode) {
-        currentMode = mode;
-        goScreen('app-screen');
-        document.getElementById('app-title').innerText = mode === 'trainee' ? 'تحليل غياب متدرب' : 'تحليل غياب شعبة';
-        document.getElementById('lbl_c_t').innerText = mode === 'trainee' ? 'اسم المتدرب: ' : 'اسم المقرر: ';
-        document.getElementById('lbl_s_i').innerText = mode === 'trainee' ? 'الرقم التدريبي: ' : 'رقم الشعبة: ';
+    function setMode(m) { currentMode=m; goScreen('app-screen'); 
+        document.getElementById('app-title').innerText = m === 'trainee' ? 'تحليل غياب متدرب' : 'تحليل غياب شعبة';
+        document.getElementById('lbl_c_t').innerText = m === 'trainee' ? 'اسم المتدرب: ' : 'اسم المقرر: ';
+        document.getElementById('lbl_s_i').innerText = m === 'trainee' ? 'الرقم التدريبي: ' : 'رقم الشعبة: ';
     }
-    
     document.getElementById('upload').addEventListener('change', function(e) {
         if(!e.target.files.length) return;
-        const reader = new FileReader();
-        reader.readAsArrayBuffer(e.target.files[0]);
-        reader.onload = function(e) {
-            const wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
+        const reader = new FileReader(); reader.readAsArrayBuffer(e.target.files[0]);
+        reader.onload = function(e) { const wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
             rawData = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
             if(rawData.length > 0) { updateFilteredReport(); document.getElementById('action-area').style.display = 'block'; }
         };
     });
 
-    function getTraineeStatus(pMax) {
-        if(pMax >= 19.5) return "حرمان 🚫";
-        if(pMax >= 14.5) return "خطر مرتفع ⚠️";
-        if(pMax >= 9.5) return "خطر بسيط 🟡";
-        return "آمن ✅";
-    }
-
     function updateFilteredReport() {
         if(rawData.length === 0) return;
         const filter = document.getElementById('statusFilter').value;
-        const thead = document.getElementById('pdf_thead');
-        const tbody = document.getElementById('pdf_rows'); 
-        tbody.innerHTML = '';
-        let count = 1;
-
+        const thead = document.getElementById('pdf_thead'); const tbody = document.getElementById('pdf_rows'); 
+        tbody.innerHTML = ''; let count = 1;
         if (currentMode === 'course') {
-            thead.innerHTML = `<tr><th style="width:30pt;">م</th><th style="width:170pt;text-align:right;padding-right:10pt;">اسم المتدرب</th><th style="width:85pt;">الرقم التدريبي</th><th style="width:45pt;">ساعات</th><th style="width:85pt;">الحالة</th><th style="width:135pt;">البريد الرسمي</th></tr>`;
+            thead.innerHTML = `<tr><th style="width:30pt;">م</th><th style="width:170pt;text-align:right;padding-right:10pt;">اسم المتدرب</th><th style="width:85pt;">الرقم التدريبي</th><th style="width:40pt;">ساعات</th><th style="width:80pt;">الحالة</th><th style="width:130pt;">البريد الرسمي</th></tr>`;
             document.getElementById('pdf_course').innerText = rawData[0]['اسم المقرر'] || "---";
             document.getElementById('pdf_section').innerText = rawData[0]['أرقام شعب المقرر'] || "---";
             document.getElementById('pdf_contact_email').innerText = "انظر الجدول بالأسفل";
-
             rawData.forEach(r => {
                 let h = parseFloat(r['إجمالي ساعات الغياب بدون عذر'] || 0);
                 let s = h >= 4 ? "حرمان 🚫" : h == 3 ? "خطر مرتفع ⚠️" : h == 2 ? "خطر بسيط 🟡" : "آمن ✅";
                 if(filter === 'all' || s.includes(filter)) {
-                    tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right;padding-right:10pt;">${r['اسم المتدرب']}</td><td>${r['رقم المتدرب']}</td><td style="font-weight:bold;">${h}</td><td class="fw-bold">${s}</td><td style="font-size:8.5pt; direction:ltr;">${r['رقم المتدرب']}@tvtc.edu.sa</td></tr>`;
+                    tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right;padding-right:10pt;">${r['اسم المتدرب']}</td><td>${r['رقم المتدرب']}</td><td>${h}</td><td class="fw-bold">${s}</td><td style="font-size:8pt; direction:ltr;">${r['رقم المتدرب']}@tvtc.edu.sa</td></tr>`;
                 }
             });
         } else {
-            thead.innerHTML = `<tr><th style="width:30pt;">م</th><th style="width:170pt;text-align:right;padding-right:10pt;">اسم المقرر</th><th style="width:60pt;">الشعبة</th><th style="width:65pt;">نظري %</th><th style="width:65pt;">عملي %</th><th style="width:80pt;">الحالة</th></tr>`;
+            thead.innerHTML = `<tr><th style="width:30pt;">م</th><th style="width:170pt;text-align:right;padding-right:10pt;">اسم المقرر</th><th style="width:60pt;">الشعبة</th><th style="width:60pt;">نظري %</th><th style="width:60pt;">عملي %</th><th style="width:80pt;">الحالة</th></tr>`;
             document.getElementById('pdf_course').innerText = rawData[0]['اسم المتدرب'] || "---";
             document.getElementById('pdf_section').innerText = rawData[0]['رقم المتدرب'] || "---";
             document.getElementById('pdf_contact_email').innerText = (rawData[0]['رقم المتدرب'] || "000") + "@tvtc.edu.sa";
-
             rawData.forEach(r => {
-                let pN = parseFloat(r['إجمالي نسبة الغياب النظري بدون عذر'] || 0);
-                let pA = parseFloat(r['إجمالي نسبة الغياب العملي بدون عذر'] || 0);
-                let pT = parseFloat(r['إجمالي نسبة الغياب بدون عذر'] || 0);
-                let maxP = Math.max(pN, pA, pT);
-                let s = getTraineeStatus(maxP);
+                let pN = parseFloat(r['إجمالي نسبة الغياب النظري بدون عذر'] || 0); let pA = parseFloat(r['إجمالي نسبة الغياب العملي بدون عذر'] || 0);
+                let pT = parseFloat(r['إجمالي نسبة الغياب بدون عذر'] || 0); let maxP = Math.max(pN, pA, pT);
+                let s = maxP >= 19.5 ? "حرمان 🚫" : maxP >= 14.5 ? "خطر مرتفع ⚠️" : maxP >= 9.5 ? "خطر بسيط 🟡" : "آمن ✅";
                 if(filter === 'all' || s.includes(filter)) {
                     tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right;padding-right:10pt;font-size:9pt;">${r['اسم المقرر']}</td><td>${r['أرقام شعب المقرر']}</td><td dir="ltr">${pN}%</td><td dir="ltr">${pA}%</td><td class="fw-bold">${s}</td></tr>`;
                 }
@@ -233,8 +196,8 @@
             margin: 0, 
             filename: 'رادار_الغياب_الرسمي.pdf', 
             image: { type: 'jpeg', quality: 1 }, 
-            html2canvas: { scale: 3, useCORS: true }, 
-            jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' } 
+            html2canvas: { scale: 3, useCORS: true, scrollX: 0, scrollY: 0 }, 
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
         }; 
         html2pdf().set(opt).from(element).save(); 
     }
