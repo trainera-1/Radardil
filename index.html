@@ -26,31 +26,30 @@
             box-sizing: border-box;
         }
 
-        /* الجدول الرئيسي لضمان تكرار الهيدر */
-        .master-table { width: 100%; border-collapse: collapse; border: none; }
-        .master-table thead { display: table-header-group; } /* هذا السطر يكرر الهيدر في كل صفحة */
+        /* تقنية تكرار الهيدر الرسمي في كل صفحة */
+        .master-table { width: 100%; border-collapse: collapse; }
+        .master-table thead { display: table-header-group; } 
 
-        .report-header-content { 
+        .official-header-content { 
             width: 100%; 
-            border-bottom: 2.5pt solid var(--gold); 
-            margin-bottom: 10pt; 
+            border-bottom: 2pt solid var(--gold); 
             padding-bottom: 10pt;
+            margin-bottom: 15pt;
         }
 
-        .header-table { width: 100%; border-collapse: collapse; }
-        .header-table td { border: none !important; vertical-align: middle; }
+        .header-inner-table { width: 100%; border-collapse: collapse; border: none; }
+        .header-inner-table td { border: none !important; vertical-align: middle; }
 
         .info-table { width: 100%; border: 2pt solid #000; border-collapse: collapse; table-layout: fixed; margin-bottom: 15pt; }
-        .info-table td { padding: 7pt; border: 1.5pt solid #000; font-weight: bold; font-size: 10.5pt; text-align: right; }
+        .info-table td { padding: 8pt; border: 1.5pt solid #000; font-weight: bold; font-size: 10.5pt; text-align: right; }
         
         .status-header-box { border: 2pt solid #000; border-top: none; background: #f2f2f2; text-align: center; padding: 8pt; font-weight: bold; width: 60%; margin: 0 auto 15pt; border-radius: 0 0 15pt 15pt; font-size: 12pt; }
         
         .data-table { width: 100%; border-collapse: collapse; table-layout: fixed; border: 2pt solid #000; }
-        .data-table th, .data-table td { border: 1.5pt solid #000; padding: 5pt 2pt; text-align: center; font-size: 9pt; vertical-align: middle; word-wrap: break-word; }
+        .data-table th, .data-table td { border: 1.5pt solid #000; padding: 6pt 2pt; text-align: center; font-size: 9pt; vertical-align: middle; }
         .data-table th { background: #eeeeee; font-weight: bold; }
 
-        .signatures { margin-top: 30pt; display: flex; justify-content: space-between; padding: 0 30pt; }
-        .btn-custom { border-radius: 12px; padding: 12px; font-weight: bold; margin: 5px; cursor: pointer; border: none; flex: 1; }
+        .btn-custom { border-radius: 12px; padding: 12px; font-weight: bold; margin: 5px; cursor: pointer; border: none; flex: 1; transition: 0.3s; }
     </style>
 </head>
 <body>
@@ -103,8 +102,8 @@
             <thead>
                 <tr>
                     <td>
-                        <div class="report-header-content">
-                            <table class="header-table">
+                        <div class="official-header-content">
+                            <table class="header-inner-table">
                                 <tr>
                                     <td style="width: 35%; text-align: right;">
                                         <img src="IMG_7496.png" width="190">
@@ -126,7 +125,7 @@
             <tbody>
                 <tr>
                     <td>
-                        <div id="first-page-info">
+                        <div id="first-page-only">
                             <table class="info-table">
                                 <tr><td width="55%"><span id="lbl_c_t">اسم المقرر: </span> <span id="pdf_course"></span></td><td width="45%"><span id="lbl_s_i">رقم الشعبة: </span> <span id="pdf_section"></span></td></tr>
                                 <tr><td width="55%">القسم التدريبي: <span id="pdf_dept"></span></td><td width="45%">التخصص: <span id="pdf_major"></span></td></tr>
@@ -140,7 +139,7 @@
                             <tbody id="pdf_rows"></tbody>
                         </table>
 
-                        <div class="signatures">
+                        <div class="mt-5 d-flex justify-content-between px-4">
                             <div class="text-center"><b>مدرب المقرر / المرشد</b><br><div style="width:140pt; border-bottom:1.5pt solid #000; margin-top:25px; height: 10pt;"></div></div>
                             <div class="text-center"><b>التوقيع / المصادقة</b><br><div style="width:140pt; border-bottom:1.5pt solid #000; margin-top:25px; height: 10pt;"></div></div>
                         </div>
@@ -172,7 +171,10 @@
         const reader = new FileReader(); reader.readAsArrayBuffer(e.target.files[0]);
         reader.onload = function(e) { const wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
             rawData = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-            if(rawData.length > 0) { updateFilteredReport(); document.getElementById('action-area').style.display = 'block'; }
+            if(rawData.length > 0) { 
+                updateFilteredReport(); 
+                document.getElementById('action-area').style.display = 'block'; 
+            }
         };
     });
 
@@ -224,7 +226,7 @@
             margin: 0, 
             filename: 'رادار_الغياب_الرسمي.pdf', 
             image: { type: 'jpeg', quality: 1 }, 
-            html2canvas: { scale: 3, useCORS: true, scrollX: 0, scrollY: 0, letterRendering: true }, 
+            html2canvas: { scale: 2.5, useCORS: true, scrollX: 0, scrollY: 0 }, 
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } 
         }; 
         html2pdf().set(opt).from(element).save(); 
