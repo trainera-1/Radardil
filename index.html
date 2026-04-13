@@ -15,25 +15,25 @@
         #app-screen { display: none; padding-bottom: 50px; }
         .header-section { background: linear-gradient(135deg, #004d4d, var(--primary)); color: white; padding: 40px 15px; border-radius: 0 0 40px 40px; text-align: center; position: relative; }
         
-        /* تنسيق ورقة A4 الرسمية للمعاينة والطباعة */
+        /* تنسيق ورقة A4 الرسمية (الماكينة) */
         #report-template { 
             display: none; 
             padding: 30pt; 
             background: white; 
             width: 595pt; 
-            min-height: 842pt; /* ارتفاع A4 */
+            min-height: 841pt; 
             margin: 20px auto; 
             color: #000; 
-            border: 1px solid #ccc;
-            box-shadow: 0 0 20px rgba(0,0,0,0.15); /* ظل لتبدو كالورقة */
+            border: 1px solid #ddd;
         }
         
-        .report-header-table { width: 100%; border-bottom: 2pt solid var(--gold); margin-bottom: 20pt; }
-        .report-header-table td { border: none !important; vertical-align: top; padding-bottom: 10pt; }
+        /* جدول الهيدر - يمنع تداخل العناصر عند التحميل */
+        .header-table { width: 100%; border-bottom: 2pt solid var(--gold); margin-bottom: 20pt; border-collapse: collapse; }
+        .header-table td { border: none !important; vertical-align: middle; padding-bottom: 15pt; }
 
-        /* هندسة الجداول - المسطرة */
+        /* هندسة المسطرة للجداول */
         .info-table { width: 100%; border: 2pt solid #000; border-collapse: collapse; table-layout: fixed; }
-        .info-table td { padding: 8pt; border: 1.5pt solid #000; font-weight: bold; font-size: 10pt; text-align: right; overflow: hidden; white-space: nowrap; }
+        .info-table td { padding: 8pt; border: 1.5pt solid #000; font-weight: bold; font-size: 10.5pt; text-align: right; overflow: hidden; white-space: nowrap; }
         
         .status-header-box { border: 2pt solid #000; border-top: none; background: #f2f2f2; text-align: center; padding: 8pt; font-weight: bold; width: 60%; margin: 0 auto 20pt; border-radius: 0 0 15pt 15pt; font-size: 12pt; }
         
@@ -89,17 +89,17 @@
     </div>
 
     <div id="report-template">
-        <table class="report-header-table">
+        <table class="header-table">
             <tr>
-                <td style="width: 33%; text-align: right;">
-                    <img src="IMG_7496.png" width="180" style="display: block;">
+                <td style="width: 35%; text-align: right;">
+                    <img src="IMG_7496.png" width="190" style="display: block;">
                 </td>
-                <td style="width: 34%; text-align: center; padding-top: 10pt;">
+                <td style="width: 30%; text-align: center;">
                     <h5 style="margin: 0; font-weight: bold; font-size: 14pt;">المملكة العربية السعودية</h5>
                     <p style="margin: 5px 0; font-size: 10pt;">المؤسسة العامة للتدريب التقني والمهني</p>
-                    <h6 id="pdf_unit" style="margin: 5px 0; font-weight: bold; color: var(--primary); font-size: 11pt;">---</h6>
+                    <h6 id="pdf_unit" style="margin: 0; font-weight: bold; color: var(--primary);">---</h6>
                 </td>
-                <td style="width: 33%; text-align: left; padding-top: 10pt; font-size: 10pt; font-weight: bold;">
+                <td style="width: 35%; text-align: left; font-size: 10pt; font-weight: bold;">
                     تاريخ الرصد:<br><span id="pdf_date"></span>
                 </td>
             </tr>
@@ -127,7 +127,7 @@
         </table>
 
         <div class="mt-5 d-flex justify-content-between px-4">
-            <div class="text-center"><b>مدرب المقرر</b><br><div style="width:160pt; border-bottom:1.5pt solid #000; margin-top:20px; height: 15pt;"></div></div>
+            <div class="text-center"><b>مدرب المقرر / المرشد</b><br><div style="width:160pt; border-bottom:1.5pt solid #000; margin-top:20px; height: 15pt;"></div></div>
             <div class="text-center"><b>التوقيع / المصادقة</b><br><div style="width:160pt; border-bottom:1.5pt solid #000; margin-top:20px; height: 15pt;"></div></div>
         </div>
         <div class="mt-5 pt-4 text-center" style="border-top: 2pt double #000; font-size: 10px; font-weight: bold;">إعداد وتطوير: م/عادل الشمري</div>
@@ -167,10 +167,7 @@
         reader.onload = function(e) {
             const wb = XLSX.read(new Uint8Array(e.target.result), {type: 'array'});
             rawData = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
-            if(rawData.length > 0) { 
-                updateFilteredReport(); 
-                document.getElementById('action-area').style.display = 'block'; 
-            }
+            if(rawData.length > 0) { updateFilteredReport(); document.getElementById('action-area').style.display = 'block'; }
         };
     });
 
@@ -219,7 +216,6 @@
                 }
             });
         }
-        
         document.getElementById('pdf_unit').innerText = rawData[0]['اسم الوحدة'] || "---";
         document.getElementById('pdf_dept').innerText = rawData[0]['اسم القسم'] || "---";
         document.getElementById('pdf_major').innerText = rawData[0]['اسم التخصص'] || "---";
@@ -234,10 +230,10 @@
         const element = document.getElementById('report-template'); 
         element.style.display = 'block'; 
         const opt = { 
-            margin: 0, // تصفير الهوامش ليتناسب مع قياس A4 تماماً
+            margin: 0, 
             filename: 'رادار_الغياب_الرسمي.pdf', 
             image: { type: 'jpeg', quality: 1 }, 
-            html2canvas: { scale: 3, useCORS: true, letterRendering: true }, 
+            html2canvas: { scale: 3, useCORS: true }, 
             jsPDF: { unit: 'pt', format: 'a4', orientation: 'portrait' } 
         }; 
         html2pdf().set(opt).from(element).save(); 
