@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>متابعة نسبة الغياب - م. عادل الشمري</title>
     <style>
-        /* جميع التنسيقات مدمجة هنا (لا نحتاج لأي إنترنت أو روابط خارجية) */
+        /* التنسيقات مدمجة بالكامل (أوفلاين) */
         * { box-sizing: border-box; }
         :root { --primary: #006666; --gold: #a4854d; --bg-light: #f4f7f6; }
         body { background-color: var(--bg-light); font-family: 'Segoe UI', Tahoma, Arial, sans-serif; margin: 0; padding: 0; }
@@ -110,7 +110,7 @@
         <h2 class="fw-bold" id="app-title">متابعة نسبة الغياب</h2>
         <div class="container mt-4">
             <input type="file" id="upload" class="form-control shadow-sm mb-3" accept=".csv" />
-            <small style="color: #fff; opacity: 0.8;">ملاحظة: يجب أن يكون الملف بصيغة (CSV UTF-8)</small>
+            <small style="color: #fff; opacity: 0.9;">أرفق ملف الغياب (CSV) مباشرة ليتم تحليله</small>
         </div>
     </div>
 
@@ -219,12 +219,10 @@
         document.getElementById('lbl_s_i').innerText = m === 'trainee' ? 'الرقم التدريبي: ' : 'رقم الشعبة: ';
     }
 
-    // القارئ الذكي المحدث لملفات الـ CSV (يتعرف على الفواصل العربية تلقائياً)
     function parseCSV(csvText) {
         const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
         if (lines.length === 0) return [];
         
-        // استشعار ذكي للفاصلة (هل هي فاصلة عادية أم منقوطة للإكسل العربي؟)
         let delimiter = ',';
         if (lines[0].split(';').length > lines[0].split(',').length) {
             delimiter = ';';
@@ -256,15 +254,17 @@
     document.getElementById('upload').addEventListener('change', function(e) {
         if(!e.target.files.length) return;
         const reader = new FileReader();
-        // نقرأ الملف بترميز UTF-8 لدعم الأسماء العربية
-        reader.readAsText(e.target.files[0], 'UTF-8');
+        
+        // السر هنا: استخدام ترميز Windows-1256 المعتمد في الخليج والإكسل العربي
+        reader.readAsText(e.target.files[0], 'windows-1256');
+        
         reader.onload = function(e) { 
             rawData = parseCSV(e.target.result);
             if(rawData.length > 0 && Object.keys(rawData[0]).length > 1) { 
                 updateFilteredReport(); 
                 document.getElementById('action-area').style.display = 'block'; 
             } else {
-                alert("لم أتمكن من قراءة البيانات! تأكد أن الملف بصيغة (CSV) ومحفوظ بترميز (UTF-8).");
+                alert("تعذر قراءة الملف! يرجى التأكد من اختيار ملف غياب صحيح.");
             }
         };
     });
