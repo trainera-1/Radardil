@@ -5,44 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>متابعة نسبة الغياب - م. عادل الشمري</title>
     <style>
-        /* التنسيقات الداخلية المستقلة (بديلة للروابط الخارجية) */
+        /* جميع التنسيقات مدمجة هنا (لا نحتاج لأي إنترنت أو روابط خارجية) */
         * { box-sizing: border-box; }
         :root { --primary: #006666; --gold: #a4854d; --bg-light: #f4f7f6; }
-        body { background-color: var(--bg-light); font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 0; }
+        body { background-color: var(--bg-light); font-family: 'Segoe UI', Tahoma, Arial, sans-serif; margin: 0; padding: 0; }
         
-        /* أدوات التصميم العامة */
         .fw-bold { font-weight: bold; }
         .text-center { text-align: center; }
         .text-muted { color: #6c757d; }
         .w-100 { width: 100%; }
         .d-flex { display: flex; }
         .justify-content-between { justify-content: space-between; }
+        .position-absolute { position: absolute; }
+        .small { font-size: 0.85em; }
+        
         .mb-3 { margin-bottom: 15px; } .mb-4 { margin-bottom: 25px; }
-        .mt-4 { margin-top: 20px; } .mt-5 { margin-top: 40px; }
-        .p-4 { padding: 25px; } .px-4 { padding-left: 20px; padding-right: 20px; }
+        .mt-3 { margin-top: 15px; } .mt-4 { margin-top: 20px; } .mt-5 { margin-top: 40px; }
+        .p-4 { padding: 25px; } .px-4 { padding-left: 20px; padding-right: 20px; } .px-5 { padding-left: 40px; padding-right: 40px; } .py-2 { padding-top: 10px; padding-bottom: 10px; }
+        
         .shadow { box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .shadow-sm { box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .shadow-sm { box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .border-0 { border: none !important; }
+        .rounded-pill { border-radius: 50px; }
+        .rounded-4 { border-radius: 15px; }
         
         /* الأزرار والحقول */
-        .btn { padding: 12px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; border: 2px solid transparent; font-size: 16px; transition: 0.3s; text-align: center; }
-        .btn-primary { background-color: var(--primary); color: white; border-color: var(--primary); padding: 12px 40px; }
+        .btn { border-radius: 8px; font-weight: bold; cursor: pointer; border: 2px solid transparent; font-size: 16px; transition: 0.3s; text-align: center; font-family: inherit; }
+        .btn-primary { background-color: var(--primary); color: white; border-color: var(--primary); }
         .btn-outline-primary { background-color: transparent; color: var(--primary); border-color: var(--primary); }
         .btn-outline-primary:hover { background-color: var(--primary); color: white; }
         .btn-secondary { background-color: #6c757d; color: white; border-radius: 50px; padding: 8px 30px; }
-        .btn-light { background-color: #f8f9fa; color: #000; border: 1px solid #ddd; padding: 5px 15px; border-radius: 5px; position: absolute; top: 20px; right: 20px; }
-        .btn-custom { border-radius: 12px; padding: 12px; font-weight: bold; margin: 5px; cursor: pointer; border: none; flex: 1; color: white; }
-        .rounded-pill { border-radius: 50px; }
-        .rounded-4 { border-radius: 15px; }
-        .form-control, .form-select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 10px; font-family: inherit; font-size: 15px; }
-        .alert-warning { background-color: #fff3cd; color: #664d03; padding: 10px; border-radius: 8px; font-size: 0.9em; }
+        .btn-light { background-color: #f8f9fa; color: #000; border: 1px solid #ddd; padding: 6px 15px; border-radius: 5px; top: 20px; right: 20px; }
+        .btn-custom { border-radius: 12px; padding: 12px; font-weight: bold; margin: 5px; cursor: pointer; border: none; flex: 1; color: white; font-family: inherit; font-size: 15px; }
+        
+        .form-control, .form-select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 10px; font-family: inherit; font-size: 15px; outline: none; }
+        .alert-warning { background-color: #fff3cd; color: #664d03; padding: 12px; border-radius: 8px; font-size: 0.9em; border: 1px solid #ffecb5; }
 
         /* الشاشات */
         .full-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; text-align: center; padding: 20px; }
-        .main-card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 600px; border-top: 8px solid var(--primary); margin: auto; }
+        .main-card { background: white; padding: 40px; border-radius: 25px; max-width: 600px; border-top: 8px solid var(--primary); margin: auto; }
         #app-screen { display: none; padding-bottom: 50px; }
         .header-section { background: linear-gradient(135deg, #004d4d, var(--primary)); color: white; padding: 40px 15px; border-radius: 0 0 40px 40px; text-align: center; position: relative; }
         .container { max-width: 550px; margin: auto; }
-        .card { background: white; border: 1px solid #eee; border-radius: 15px; }
+        .card { background: white; border-radius: 15px; border: 1px solid #eaeaea; }
 
         /* حاوية التقرير والمعاينة */
         .report-preview-container { width: 100%; overflow-x: auto; padding: 10px; box-sizing: border-box; }
@@ -68,7 +73,7 @@
         .footer-line { height: 4px; background: linear-gradient(to right, transparent, var(--primary), var(--gold), transparent); border-radius: 5px; margin-bottom: 6px; opacity: 0.8; -webkit-print-color-adjust: exact; }
         .footer-text { font-size: 8.5pt; font-weight: bold; color: var(--primary); opacity: 0.9; }
 
-        /* إعدادات الطباعة الذكية */
+        /* إعدادات الطباعة الذكية للمتصفح */
         @media print {
             body * { visibility: hidden; }
             .report-preview-container, .report-preview-container * { visibility: visible; }
@@ -85,8 +90,8 @@
     <div class="main-card shadow">
         <h2 class="fw-bold mb-4" style="color: var(--primary);">متابعة نسبة الغياب</h2>
         <p class="mb-4 text-muted fw-bold" style="line-height: 1.6;">أداة تساعد المدرب لمعرفة نسبة الغياب في شعبة وغياب متدرب معين للقيام بمهام الإرشاد وتعرضها بشكل بسيط</p>
-        <div class="alert-warning mb-4">إعداد وتطوير: <b>م. عادل الشمري | 0505596106</b></div>
-        <button class="btn btn-primary rounded-pill shadow" onclick="goScreen('mode-screen')">دخول ➜</button>
+        <div class="alert-warning mb-4 fw-bold">إعداد وتطوير: م. عادل الشمري | 0505596106</div>
+        <button class="btn btn-primary rounded-pill shadow px-5 py-2" onclick="goScreen('mode-screen')">دخول ➜</button>
     </div>
 </div>
 
@@ -95,29 +100,30 @@
         <h3 class="fw-bold mb-4" style="color: var(--primary);">اختر نوع التقرير</h3>
         <button class="btn btn-outline-primary w-100 mb-3 p-4 fw-bold rounded-4" onclick="setMode('course')">📚 تحليل غياب شعبة (كاملة)</button>
         <button class="btn btn-outline-primary w-100 mb-3 p-4 fw-bold rounded-4" onclick="setMode('trainee')">👨‍🎓 تحليل غياب متدرب</button>
-        <button class="btn btn-secondary mt-3" onclick="goScreen('welcome-screen')">العودة</button>
+        <button class="btn btn-secondary mt-3 fw-bold" onclick="goScreen('welcome-screen')">العودة</button>
     </div>
 </div>
 
 <div id="app-screen">
     <div class="header-section shadow">
-        <button class="btn-light" onclick="goScreen('mode-screen')">⬅ عودة</button>
+        <button class="btn btn-light position-absolute fw-bold" onclick="goScreen('mode-screen')">⬅ عودة</button>
         <h2 class="fw-bold" id="app-title">متابعة نسبة الغياب</h2>
         <div class="container mt-4">
             <input type="file" id="upload" class="form-control shadow-sm mb-3" accept=".csv" />
+            <small style="color: #fff; opacity: 0.8;">ملاحظة: يجب أن يكون الملف بصيغة (CSV UTF-8)</small>
         </div>
     </div>
 
     <div class="container mt-5 text-center" id="action-area" style="display:none;">
         <div class="card p-4 shadow-sm">
-            <select id="statusFilter" class="form-select mb-4" onchange="updateFilteredReport()">
+            <select id="statusFilter" class="form-select mb-4 fw-bold" onchange="updateFilteredReport()">
                 <option value="all">جميع الحالات</option>
                 <option value="حرمان">حرمان فقط</option>
                 <option value="خطر مرتفع">خطر مرتفع</option>
                 <option value="خطر بسيط">خطر بسيط</option>
                 <option value="آمن">آمن فقط</option>
             </select>
-            <div class="d-flex">
+            <div class="d-flex justify-content-between">
                 <button class="btn-custom" style="background:var(--primary);" onclick="previewReport()">👁️ عرض ومعاينة</button>
                 <button class="btn-custom" style="background:var(--gold);" onclick="downloadPDF()">📥 حفظ كـ PDF</button>
             </div>
@@ -213,14 +219,19 @@
         document.getElementById('lbl_s_i').innerText = m === 'trainee' ? 'الرقم التدريبي: ' : 'رقم الشعبة: ';
     }
 
-    // القارئ الداخلي الذكي لملفات الـ CSV (يغني عن أي روابط خارجية)
+    // القارئ الذكي المحدث لملفات الـ CSV (يتعرف على الفواصل العربية تلقائياً)
     function parseCSV(csvText) {
         const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
         if (lines.length === 0) return [];
         
-        // إزالة أي رموز مخفية (BOM) من الهيدر لضمان قراءة اللغة العربية صحيحة
+        // استشعار ذكي للفاصلة (هل هي فاصلة عادية أم منقوطة للإكسل العربي؟)
+        let delimiter = ',';
+        if (lines[0].split(';').length > lines[0].split(',').length) {
+            delimiter = ';';
+        }
+        
         let headerLine = lines[0].replace(/^\uFEFF/, '');
-        const headers = headerLine.split(',').map(h => h.trim().replace(/^"|"$/g, ''));
+        const headers = headerLine.split(delimiter).map(h => h.trim().replace(/^"|"$/g, ''));
         const result = [];
         
         for (let i = 1; i < lines.length; i++) {
@@ -229,13 +240,13 @@
             let value = '';
             for (let char of lines[i]) {
                 if (char === '"') inQuotes = !inQuotes;
-                else if (char === ',' && !inQuotes) { row.push(value); value = ''; }
+                else if (char === delimiter && !inQuotes) { row.push(value); value = ''; }
                 else value += char;
             }
             row.push(value);
             let obj = {};
             for (let j = 0; j < headers.length; j++) {
-                obj[headers[j]] = row[j] ? row[j].trim().replace(/^"|"$/g, '') : "";
+                if(headers[j]) obj[headers[j]] = row[j] ? row[j].trim().replace(/^"|"$/g, '') : "";
             }
             result.push(obj);
         }
@@ -245,13 +256,15 @@
     document.getElementById('upload').addEventListener('change', function(e) {
         if(!e.target.files.length) return;
         const reader = new FileReader();
-        // قراءة الملف كنص (UTF-8) لضمان توافقه مع الأنظمة العربية
+        // نقرأ الملف بترميز UTF-8 لدعم الأسماء العربية
         reader.readAsText(e.target.files[0], 'UTF-8');
         reader.onload = function(e) { 
             rawData = parseCSV(e.target.result);
-            if(rawData.length > 0) { 
+            if(rawData.length > 0 && Object.keys(rawData[0]).length > 1) { 
                 updateFilteredReport(); 
                 document.getElementById('action-area').style.display = 'block'; 
+            } else {
+                alert("لم أتمكن من قراءة البيانات! تأكد أن الملف بصيغة (CSV) ومحفوظ بترميز (UTF-8).");
             }
         };
     });
@@ -269,7 +282,9 @@
                 let h = parseFloat(r['إجمالي ساعات الغياب بدون عذر'] || 0);
                 let s = h >= 4 ? "حرمان 🚫" : h == 3 ? "خطر مرتفع ⚠️" : h == 2 ? "خطر بسيط 🟡" : "آمن ✅";
                 if(filter === 'all' || s.includes(filter)) {
-                    tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right;padding-right:5px;">${r['اسم المتدرب']}</td><td>${r['رقم المتدرب']}</td><td style="font-weight:bold;">${h}</td><td class="fw-bold">${s}</td><td style="font-size:8.5pt;" dir="ltr">${r['رقم المتدرب']}@tvtc.edu.sa</td></tr>`;
+                    let email = r['رقم المتدرب'] ? r['رقم المتدرب'] + "@tvtc.edu.sa" : "---";
+                    let studentName = r['اسم المتدرب'] || "غير محدد";
+                    tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right;padding-right:5px;">${studentName}</td><td>${r['رقم المتدرب'] || ''}</td><td style="font-weight:bold;">${h}</td><td class="fw-bold">${s}</td><td style="font-size:8.5pt;" dir="ltr">${email}</td></tr>`;
                 }
             });
         } else {
@@ -280,7 +295,8 @@
                 let maxP = Math.max(pN, pA, parseFloat(r['إجمالي نسبة الغياب بدون عذر'] || 0));
                 let s = maxP >= 19.5 ? "حرمان 🚫" : maxP >= 14.5 ? "خطر مرتفع ⚠️" : maxP >= 9.5 ? "خطر بسيط 🟡" : "آمن ✅";
                 if(filter === 'all' || s.includes(filter)) {
-                    tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right;padding-right:5px;font-size:10pt;">${r['اسم المقرر']}</td><td>${r['أرقام شعب المقرر']}</td><td dir="ltr">${pN}%</td><td dir="ltr">${pA}%</td><td class="fw-bold">${s}</td></tr>`;
+                    let courseName = r['اسم المقرر'] || "غير محدد";
+                    tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right;padding-right:5px;font-size:10pt;">${courseName}</td><td>${r['أرقام شعب المقرر'] || ''}</td><td dir="ltr">${pN}%</td><td dir="ltr">${pA}%</td><td class="fw-bold">${s}</td></tr>`;
                 }
             });
         }
@@ -290,7 +306,8 @@
         document.getElementById('pdf_dept').innerText = rawData[0]['اسم القسم'] || "---";
         document.getElementById('pdf_major').innerText = rawData[0]['اسم التخصص'] || "---";
         document.getElementById('pdf_term').innerText = rawData[0]['الفصل التدريبي'] || "---";
-        document.getElementById('pdf_contact_email').innerText = (rawData[0]['رقم المتدرب'] || "000") + "@tvtc.edu.sa";
+        let contactEmail = rawData[0]['رقم المتدرب'] ? rawData[0]['رقم المتدرب'] + "@tvtc.edu.sa" : "---";
+        document.getElementById('pdf_contact_email').innerText = currentMode === 'trainee' ? contactEmail : "انظر الجدول بالأسفل";
         document.getElementById('pdf_date').innerText = new Date().toLocaleDateString('ar-SA');
         document.getElementById('pdf_status_text').innerText = filter === 'all' ? "تحليل جميع الحالات" : "تقرير حالة: " + filter;
     }
