@@ -8,22 +8,28 @@
         * { box-sizing: border-box; }
         :root { --primary: #006666; --gold: #a4854d; --bg-light: #f4f7f6; }
         body { background-color: var(--bg-light); font-family: 'Segoe UI', Tahoma, Arial, sans-serif; margin: 0; padding: 0; }
+        
+        /* الواجهة الرئيسية الأصلية */
+        .full-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; text-align: center; padding: 20px; }
+        .main-card { background: white; padding: 40px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-width: 600px; border-top: 8px solid var(--primary); margin: auto; }
+        #app-screen { display: none; padding-bottom: 50px; }
+        .header-section { background: linear-gradient(135deg, #004d4d, var(--primary)); color: white; padding: 40px 15px; border-radius: 0 0 40px 40px; text-align: center; position: relative; }
+        
         .fw-bold { font-weight: bold; } .text-center { text-align: center; } .d-flex { display: flex; }
         .mb-3 { margin-bottom: 15px; } .mb-4 { margin-bottom: 25px; } .mt-4 { margin-top: 20px; } .mt-5 { margin-top: 40px; }
         .p-4 { padding: 25px; } .shadow { box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .btn { border-radius: 8px; font-weight: bold; cursor: pointer; border: 2px solid transparent; font-size: 16px; transition: 0.3s; text-align: center; font-family: inherit; }
-        .btn-primary { background-color: var(--primary); color: white; border-color: var(--primary); padding: 12px 40px; }
-        .btn-outline-primary { background-color: transparent; color: var(--primary); border-color: var(--primary); }
-        .btn-outline-primary:hover { background-color: var(--primary); color: white; }
-        .btn-secondary { background-color: #6c757d; color: white; border-radius: 50px; padding: 8px 30px; }
+        .btn { border-radius: 12px; font-weight: bold; cursor: pointer; border: none; font-size: 16px; transition: 0.3s; text-align: center; font-family: inherit; }
+        .btn-primary { background-color: var(--primary); color: white; padding: 12px 45px; }
+        .btn-outline-primary { background: white; color: var(--primary); border: 2.5pt solid var(--primary); }
+        .btn-outline-primary:hover { background: var(--primary); color: white; }
+        .btn-secondary { background-color: #6c757d; color: white; padding: 10px 35px; border-radius: 50px; }
         .btn-light { background-color: #f8f9fa; color: #000; border: 1px solid #ddd; padding: 6px 15px; border-radius: 5px; position: absolute; top: 20px; right: 20px; }
-        .btn-custom { border-radius: 12px; padding: 12px; font-weight: bold; margin: 5px; cursor: pointer; border: none; flex: 1; color: white; font-size: 15px; }
+        .btn-custom { border-radius: 12px; padding: 12px; font-weight: bold; margin: 5px; flex: 1; color: white; font-size: 15px; }
+        
         .form-control, .form-select { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 10px; font-family: inherit; font-size: 15px; }
-        .label-style { display: block; text-align: right; margin-bottom: 5px; font-weight: bold; font-size: 0.9em; color: #fff; }
-        .full-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; text-align: center; padding: 20px; }
-        .main-card { background: white; padding: 40px; border-radius: 25px; max-width: 600px; border-top: 8px solid var(--primary); margin: auto; }
-        #app-screen { display: none; padding-bottom: 50px; }
-        .header-section { background: linear-gradient(135deg, #004d4d, var(--primary)); color: white; padding: 30px 15px; border-radius: 0 0 40px 40px; text-align: center; position: relative; }
+        .label-style { display: block; text-align: right; margin-bottom: 6px; font-weight: bold; font-size: 0.95em; color: #fff; }
+
+        /* التقرير والمعاينة */
         .report-preview-container { width: 100%; overflow-x: auto; padding: 10px; box-sizing: border-box; }
         #report-template { display: none; padding: 10mm; background: white; width: 210mm !important; min-width: 210mm; margin: 20px auto; color: #000; border: 1px solid #ddd; box-shadow: 0 0 15px rgba(0,0,0,0.15); }
         table { width: 100%; border-collapse: collapse; }
@@ -35,14 +41,13 @@
         .data-table { border: 2pt solid #000; table-layout: fixed; }
         .data-table th, .data-table td { border: 1.5pt solid #000; padding: 5px 2px; text-align: center; font-size: 9pt; vertical-align: middle; }
         .data-table th { background: #eeeeee !important; font-weight: bold; -webkit-print-color-adjust: exact; }
-        .footer-line { height: 4px; background: linear-gradient(to right, transparent, var(--primary), var(--gold), transparent); border-radius: 5px; margin-top: 15px; margin-bottom: 6px; }
-        
+        .footer-line { height: 4px; background: linear-gradient(to right, transparent, var(--primary), var(--gold), transparent); border-radius: 5px; margin-top: 15px; margin-bottom: 6px; -webkit-print-color-adjust: exact; }
+
         @media print {
             body * { visibility: hidden; }
             .report-preview-container, .report-preview-container * { visibility: visible; }
-            #report-template { position: absolute; left: 0; top: 0; width: 100% !important; margin: 0; border: none; box-shadow: none; }
+            #report-template { position: absolute; left: 0; top: 0; width: 100% !important; border: none; box-shadow: none; }
             @page { size: A4; margin: 10mm; }
-            .data-table tr { page-break-inside: avoid; }
         }
     </style>
 </head>
@@ -51,8 +56,8 @@
 <div id="welcome-screen" class="full-screen">
     <div class="main-card shadow">
         <h2 class="fw-bold mb-4" style="color: var(--primary);">متابعة نسبة الغياب</h2>
-        <p class="mb-4 text-muted fw-bold">أداة المدرب الذكية للتحليل المتقدم وحساب الحرمان</p>
-        <div style="background:#fff3cd; padding:10px; border-radius:8px; font-size:0.9em;" class="mb-4">إعداد: <b>م. عادل الشمري | 0505596106</b></div>
+        <p class="mb-4 text-muted fw-bold">الأداة الذكية لمساعدة المدرب في تحليل غياب الشعبة والمتدرب للقيام بمهام الإرشاد بشكل مبسط</p>
+        <div style="background:#fff3cd; padding:10px; border-radius:8px; font-size:0.9em;" class="mb-4 fw-bold">إعداد وتطوير: م. عادل الشمري | 0505596106</div>
         <button class="btn btn-primary rounded-pill shadow" onclick="goScreen('mode-screen')">دخول ➜</button>
     </div>
 </div>
@@ -60,8 +65,8 @@
 <div id="mode-screen" class="full-screen" style="display:none;">
     <div class="main-card shadow w-100">
         <h3 class="fw-bold mb-4" style="color: var(--primary);">اختر نوع التقرير</h3>
-        <button class="btn btn-outline-primary w-100 mb-3 p-4 fw-bold rounded-4" onclick="setMode('course')">📚 تحليل غياب شعبة (كاملة)</button>
-        <button class="btn btn-outline-primary w-100 mb-3 p-4 fw-bold rounded-4" onclick="setMode('trainee')">👨‍🎓 تحليل غياب متدرب</button>
+        <button class="btn btn-outline-primary w-100 mb-3 p-4 fw-bold" onclick="setMode('course')">📚 تحليل غياب شعبة (كاملة)</button>
+        <button class="btn btn-outline-primary w-100 mb-3 p-4 fw-bold" onclick="setMode('trainee')">👨‍🎓 تحليل غياب متدرب (مفصل)</button>
         <button class="btn btn-secondary mt-3 fw-bold" onclick="goScreen('welcome-screen')">العودة</button>
     </div>
 </div>
@@ -69,13 +74,13 @@
 <div id="app-screen">
     <div class="header-section shadow">
         <button class="btn-light fw-bold" onclick="goScreen('mode-screen')">⬅ عودة</button>
-        <h2 class="fw-bold" id="app-title">متابعة نسبة الغياب</h2>
-        <div class="container">
+        <h2 class="fw-bold" id="app-title" style="margin-bottom: 25px;">متابعة نسبة الغياب</h2>
+        <div class="container" style="max-width: 500px; margin: auto;">
             <div class="mb-3">
                 <label class="label-style">أرفق ملف الغياب (CSV):</label>
                 <input type="file" id="upload" class="form-control" accept=".csv" />
             </div>
-            <div class="mb-3">
+            <div class="mb-2">
                 <label class="label-style">عدد الساعات الأسبوعية للمقرر:</label>
                 <input type="number" id="weeklyHours" class="form-control" value="2" min="1" max="12" onchange="updateFilteredReport()" />
             </div>
@@ -83,7 +88,7 @@
     </div>
 
     <div class="container mt-5 text-center" id="action-area" style="display:none;">
-        <div class="card p-4 shadow-sm" style="background:white; border-radius:15px;">
+        <div class="card p-4 shadow-sm" style="background:white; border-radius:15px; max-width:550px; margin:auto;">
             <select id="statusFilter" class="form-select mb-4 fw-bold" onchange="updateFilteredReport()">
                 <option value="all">جميع الحالات</option>
                 <option value="حرمان">حرمان فقط</option>
@@ -92,8 +97,8 @@
                 <option value="آمن">آمن فقط</option>
             </select>
             <div class="d-flex">
-                <button class="btn-custom" style="background:var(--primary);" onclick="previewReport()">👁️ عرض ومعاينة</button>
-                <button class="btn-custom" style="background:var(--gold);" onclick="downloadPDF()">📥 حفظ كـ PDF</button>
+                <button class="btn btn-custom shadow-sm" style="background:var(--primary);" onclick="previewReport()">👁️ عرض ومعاينة</button>
+                <button class="btn btn-custom shadow-sm" style="background:var(--gold);" onclick="downloadPDF()">📥 حفظ كـ PDF</button>
             </div>
         </div>
     </div>
@@ -121,12 +126,14 @@
                 <tbody>
                     <tr>
                         <td>
-                            <table class="info-table">
-                                <tr><td width="55%">اسم المقرر: <span id="pdf_course"></span></td><td width="45%">رقم الشعبة: <span id="pdf_section"></span></td></tr>
-                                <tr><td width="55%">القسم: <span id="pdf_dept"></span></td><td width="45%">التخصص: <span id="pdf_major"></span></td></tr>
-                                <tr><td width="55%">الفصل: <span id="pdf_term"></span></td><td width="45%">الساعات الأسبوعية: <span id="pdf_weekly_disp"></span></td></tr>
-                            </table>
-                            <div class="status-header-box">الحالة: <span id="pdf_status_text"></span></div>
+                            <div id="first-page-only">
+                                <table class="info-table">
+                                    <tr><td width="55%">اسم المقرر: <span id="pdf_course"></span></td><td width="45%">رقم الشعبة: <span id="pdf_section"></span></td></tr>
+                                    <tr><td width="55%">القسم: <span id="pdf_dept"></span></td><td width="45%">التخصص: <span id="pdf_major"></span></td></tr>
+                                    <tr><td width="55%">الفصل: <span id="pdf_term"></span></td><td width="45%">الساعات الأسبوعية: <span id="pdf_weekly_disp"></span></td></tr>
+                                </table>
+                                <div class="status-header-box">الحالة: <span id="pdf_status_text"></span></div>
+                            </div>
                             <table class="data-table"><thead id="pdf_thead"></thead><tbody id="pdf_rows"></tbody></table>
                             <div class="d-flex justify-content-between px-4 mt-4">
                                 <div class="text-center"><b>مدرب المقرر / المرشد</b><br><div style="width:140pt; border-bottom:1.5pt solid #000; margin-top:20px; height:10pt;"></div></div>
@@ -156,9 +163,14 @@
 
     function setMode(m) { currentMode = m; goScreen('app-screen'); }
 
-    // مستخرج ذكي يبحث عن العمود المناسب حتى لو تغير مسماه قليلاً
+    // مستخرج البيانات الدقيق المتوافق مع ملف "تجربة.csv"
     function findVal(row, keys) {
         const rowKeys = Object.keys(row);
+        for (let k of keys) {
+            let found = rowKeys.find(rk => rk.trim() === k); // بحث دقيق
+            if (found) return row[found];
+        }
+        // بحث تقريبي إذا فشل الدقيق
         for (let k of keys) {
             let found = rowKeys.find(rk => rk.includes(k));
             if (found) return row[found];
@@ -189,8 +201,8 @@
         const file = e.target.files[0]; if(!file) return;
         const reader = new FileReader(); reader.readAsArrayBuffer(file);
         reader.onload = ev => {
-            let buf = ev.target.result; let dec = new TextDecoder('utf-8');
-            let txt = dec.decode(new Uint8Array(buf));
+            let buf = ev.target.result; 
+            let txt = new TextDecoder('utf-8').decode(new Uint8Array(buf));
             if (txt.includes('')) txt = new TextDecoder('windows-1256').decode(new Uint8Array(buf));
             rawData = parseCSV(txt);
             if (rawData.length) { updateFilteredReport(); document.getElementById('action-area').style.display = 'block'; }
@@ -207,37 +219,44 @@
         if (currentMode === 'course') {
             thead.innerHTML = `<tr><th style="width:25px;">م</th><th style="width:160px;">اسم المتدرب</th><th style="width:80px;">الرقم التدريبي</th><th style="width:40px;">ساعات</th><th style="width:75px;">الحالة</th><th style="width:130px;">البريد الرسمي</th></tr>`;
             rawData.forEach(r => {
-                let h = parseFloat(findVal(r, ['ساعات الغياب بدون عذر', 'ساعات الغياب'])) || 0;
+                // المسمى الدقيق لملف الكلية: إجمالي ساعات الغياب بدون عذر
+                let h = parseFloat(findVal(r, ['إجمالي ساعات الغياب بدون عذر', 'ساعات الغياب'])) || 0;
                 let s = h >= (W * 4) ? "حرمان 🚫" : h >= (W * 3) ? "خطر مرتفع ⚠️" : h >= (W * 2) ? "خطر بسيط 🟡" : "آمن ✅";
                 if (filter === 'all' || s.includes(filter)) {
                     let id = findVal(r, ['رقم المتدرب', 'الرقم التدريبي']);
-                    tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right;padding-right:5px;">${findVal(r, ['اسم المتدرب'])}</td><td>${id}</td><td class="fw-bold">${h}</td><td class="fw-bold">${s}</td><td style="font-size:8pt;">${id}@tvtc.edu.sa</td></tr>`;
+                    tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right;padding-right:5px;">${findVal(r, ['اسم المتدرب'])}</td><td>${id}</td><td class="fw-bold">${h}</td><td class="fw-bold">${s}</td><td style="font-size:8pt;" dir="ltr">${id}@tvtc.edu.sa</td></tr>`;
                 }
             });
         } else {
+            // كود المتدرب (حافظنا عليه كما هو)
             thead.innerHTML = `<tr><th style="width:25px;">م</th><th style="width:160px;">اسم المقرر</th><th style="width:60px;">الشعبة</th><th style="width:55px;">نظري %</th><th style="width:55px;">عملي %</th><th style="width:75px;">الحالة</th></tr>`;
             rawData.forEach(r => {
-                let pN = parseFloat(findVal(r, ['نسبة الغياب النظري'])) || 0;
-                let pA = parseFloat(findVal(r, ['نسبة الغياب العملي'])) || 0;
-                let maxP = Math.max(pN, pA, parseFloat(findVal(r, ['نسبة الغياب بدون عذر'])) || 0);
+                let pN = parseFloat(findVal(r, ['إجمالي نسبة الغياب النظري بدون عذر', 'نسبة الغياب النظري'])) || 0;
+                let pA = parseFloat(findVal(r, ['إجمالي نسبة الغياب العملي بدون عذر', 'نسبة الغياب العملي'])) || 0;
+                let pT = parseFloat(findVal(r, ['إجمالي نسبة الغياب بدون عذر', 'نسبة الغياب'])) || 0;
+                let maxP = Math.max(pN, pA, pT);
                 let s = maxP >= 19.5 ? "حرمان 🚫" : maxP >= 14.5 ? "خطر مرتفع ⚠️" : maxP >= 9.5 ? "خطر بسيط 🟡" : "آمن ✅";
                 if (filter === 'all' || s.includes(filter)) {
-                    tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right;padding-right:5px;">${findVal(r, ['اسم المقرر'])}</td><td>${findVal(r, ['أرقام شعب المقرر', 'الشعبة'])}</td><td>${pN}%</td><td>${pA}%</td><td class="fw-bold">${s}</td></tr>`;
+                    tbody.innerHTML += `<tr><td>${count++}</td><td style="text-align:right;padding-right:5px;font-size:9pt;">${findVal(r, ['اسم المقرر'])}</td><td>${findVal(r, ['أرقام شعب المقرر', 'الشعبة'])}</td><td dir="ltr">${pN}%</td><td dir="ltr">${pA}%</td><td class="fw-bold">${s}</td></tr>`;
                 }
             });
         }
 
+        // تعبئة بيانات الهيدر بناءً على ملف "تجربة.csv"
         document.getElementById('pdf_course').innerText = currentMode === 'course' ? findVal(rawData[0], ['اسم المقرر']) : findVal(rawData[0], ['اسم المتدرب']);
-        document.getElementById('pdf_section').innerText = currentMode === 'course' ? findVal(rawData[0], ['أرقام شعب المقرر', 'الشعبة']) : findVal(rawData[0], ['رقم المتدرب', 'الرقم التدريبي']);
-        document.getElementById('pdf_dept').innerText = findVal(rawData[0], ['اسم القسم', 'القسم']);
+        document.getElementById('pdf_section').innerText = currentMode === 'course' ? findVal(rawData[0], ['أرقام شعب المقرر', 'رقم الشعبة']) : findVal(rawData[0], ['رقم المتدرب']);
+        document.getElementById('pdf_dept').innerText = findVal(rawData[0], ['اسم القسم', 'القسم التدريبي']);
         document.getElementById('pdf_major').innerText = findVal(rawData[0], ['اسم التخصص', 'التخصص']);
-        document.getElementById('pdf_term').innerText = findVal(rawData[0], ['الفصل التدريبي', 'الفصل']);
+        document.getElementById('pdf_term').innerText = findVal(rawData[0], ['الفصل التدريبي']);
         document.getElementById('pdf_weekly_disp').innerText = W + " ساعات";
         document.getElementById('pdf_date').innerText = new Date().toLocaleDateString('ar-SA');
-        document.getElementById('pdf_status_text').innerText = filter === 'all' ? "تحليل شامل" : "تقرير: " + filter;
+        document.getElementById('pdf_status_text').innerText = filter === 'all' ? "تحليل غياب شامل" : "تقرير حالة: " + filter;
     }
 
-    function previewReport() { document.getElementById('report-template').style.display = 'block'; window.scrollTo({top: document.getElementById('report-template').offsetTop, behavior: 'smooth'}); }
+    function previewReport() { 
+        document.getElementById('report-template').style.display = 'block'; 
+        setTimeout(() => { document.querySelector('.report-preview-container').scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
+    }
     function downloadPDF() { previewReport(); setTimeout(() => window.print(), 500); }
 </script>
 </body>
